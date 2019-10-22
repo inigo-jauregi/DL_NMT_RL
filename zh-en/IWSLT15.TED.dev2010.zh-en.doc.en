@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mteval>
+<refset setid="iwslt2015-dev2010" srclang="chinese" trglang="english" refid="ref">
+<doc docid="69" genre="lectures">
+<url>http://www.ted.com/talks/wade_davis_on_endangered_cultures.html</url>
+<description>With stunning photos and stories, National Geographic Explorer Wade Davis celebrates the extraordinary diversity of the world's indigenous cultures, which are disappearing from the planet at an alarming rate.</description>
+<keywords>anthropology,culture,environment,film,global issues,language,photography</keywords>
+<talkid>69</talkid>
+<title>Wade Davis: Dreams from endangered cultures</title>
+</doc>
+<doc docid="129" genre="lectures">
+<url>http://www.ted.com/talks/blaise_aguera_y_arcas_demos_photosynth.html</url>
+<description>Blaise Aguera y Arcas leads a dazzling demo of Photosynth, software that could transform the way we look at digital images. Using still photos culled from the Web, Photosynth builds breathtaking dreamscapes and lets us navigate them.</description>
+<keywords>collaboration,demo,microsoft,photography,short talk,software,technology,visualizations</keywords>
+<talkid>129</talkid>
+<title>Blaise Aguera y Arcas demos Photosynth</title>
+</doc>
+<doc docid="93" genre="lectures">
+<url>http://www.ted.com/talks/barry_schwartz_on_the_paradox_of_choice.html</url>
+<description>Psychologist Barry Schwartz takes aim at a central tenet of western societies: freedom of choice. In Schwartz's estimation, choice has made us not freer but more paralyzed, not happier but more dissatisfied.</description>
+<keywords>business,choice,consumerism,culture,economics,happiness,personal growth,potential,psychology,shopping</keywords>
+<talkid>93</talkid>
+<title>Barry Schwartz on the paradox of choice</title>
+</doc>
+<doc docid="227" genre="lectures">
+<url>http://www.ted.com/talks/craig_venter_is_on_the_verge_of_creating_synthetic_life.html</url>
+<description>"Can we create new life out of our digital universe?" Craig Venter asks. His answer is "yes" -- and pretty soon. He walks through his latest research and promises that we'll soon be able to build and boot up a synthetic chromosome.</description>
+<keywords>alternative energy,creativity,energy,genetics,global issues,invention,science,technology</keywords>
+<talkid>227</talkid>
+<title>Craig Venter is on the verge of creating synthetic life</title>
+</doc>
+<doc docid="531" genre="lectures">
+<url>http://www.ted.com/talks/brian_cox_what_went_wrong_at_the_lhc.html</url>
+<description>In this short talk from TED U 2009, Brian Cox shares what's new with the CERN supercollider. He covers the repairs now underway and what the future holds for the largest science experiment ever attempted.</description>
+<keywords>astronomy,energy,exploration,physics,science,technology</keywords>
+<talkid>531</talkid>
+<title>Brian Cox: What went wrong at the LHC</title>
+</doc>
+<doc docid="453" genre="lectures">
+<url>http://www.ted.com/talks/elizabeth_gilbert_on_genius.html</url>
+<description>Elizabeth Gilbert muses on the impossible things we expect from artists and geniuses -- and shares the radical idea that, instead of the rare person "being" a genius, all of us "have" a genius. It's a funny, personal and surprisingly moving talk.</description>
+<keywords>TED2009,arts,creativity,culture,entertainment,poetry,work,writing</keywords>
+<talkid>453</talkid>
+<title>Elizabeth Gilbert on nurturing creativity</title>
+</doc>
+<doc docid="535" genre="lectures">
+<url>http://www.ted.com/talks/al_gore_warns_on_latest_climate_trends.html</url>
+<description>At TED2009, Al Gore presents updated slides from around the globe to make the case that worrying climate trends are even worse than scientists predicted, and to make clear his stance on "clean coal."</description>
+<keywords>alternative energy,biosphere,climate change,energy,environment,presentation,science,technology</keywords>
+<talkid>535</talkid>
+<title>Al Gore warns on latest climate trends</title>
+</doc>
+<doc docid="457" genre="lectures">
+<url>http://www.ted.com/talks/david_merrill_demos_siftables_the_smart_blocks.html</url>
+<description>MIT grad student David Merrill demos Siftables -- cookie-sized, computerized tiles you can stack and shuffle in your hands. These future-toys can do math, play music, and talk to their friends, too. Is this the next thing in hands-on learning?</description>
+<keywords>TED2009,art,business,children,computers,design,education,invention,music,technology</keywords>
+<talkid>457</talkid>
+<title>David Merrill demos Siftables</title>
+</doc>
+</refset>
+</mteval>

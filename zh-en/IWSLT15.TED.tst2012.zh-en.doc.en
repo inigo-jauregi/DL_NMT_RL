@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mteval>
+<refset setid="iwslt2015-tst2012" srclang="chinese" trglang="english" refid="ref">
+<doc docid="1371" genre="lectures">
+<url>http://www.ted.com/talks/kevin_allocca_why_videos_go_viral.html</url>
+<description>Kevin Allocca is YouTube's trends manager, and he has deep thoughts about silly web video. In this talk from TEDYouth, he shares the 4 reasons a video goes viral. </description>
+<keywords>entertainment,video</keywords>
+<talkid>1371</talkid>
+<title>Kevin Allocca: Why videos go viral</title>
+</doc>
+<doc docid="1368" genre="lectures">
+<url>http://www.ted.com/talks/tan_le_my_immigration_story.html</url>
+<description>In 2010, technologist Tan Le took the TEDGlobal stage to demo a powerful new interface. But now, at TEDxWomen, she tells a very personal story: the story of her family -- mother, grandmother and sister -- fleeing Vietnam and building a new life. &lt;em&gt;&lt;/em&gt;</description>
+<keywords>storytelling</keywords>
+<talkid>1368</talkid>
+<title>Tan Le: My immigration story</title>
+</doc>
+<doc docid="1353" genre="lectures">
+<url>http://www.ted.com/talks/erik_johansson_impossible_photography.html</url>
+<description>Erik Johansson creates realistic photos of impossible scenes -- capturing ideas, not moments. In this witty how-to, the Photoshop wizard describes the principles he uses to make these fantastical scenarios come to life, while keeping them visually plausible.</description>
+<keywords>creativity,culture,photography,technology</keywords>
+<talkid>1353</talkid>
+<title>Erik Johansson: Impossible photography</title>
+</doc>
+<doc docid="1359" genre="lectures">
+<url>http://www.ted.com/talks/lucien_engelen_crowdsource_your_health.html</url>
+<description>You can use your smartphone to find a local ATM, but what if you need a defibrillator? Lucien Engelen shows us online innovations that are changing the way we save lives, including a crowdsourced map of local defibrillators. &lt;em&gt;&lt;/em&gt;</description>
+<keywords>health,health care,medicine,technology</keywords>
+<talkid>1359</talkid>
+<title>Lucien Engelen: Crowdsource your health</title>
+</doc>
+<doc docid="1382" genre="lectures">
+<url>http://www.ted.com/talks/a_ted_speaker_s_worst_nightmare.html</url>
+<description>Colin Robertson had 3 minutes on the stage to tell the world about his solar-powered crowdsourced health care solution. And then...</description>
+<keywords>entertainment,performance,performance art</keywords>
+<talkid>1382</talkid>
+<title>Improv Everywhere: A TED speaker's worst nightmare</title>
+</doc>
+<doc docid="1381" genre="lectures">
+<url>http://www.ted.com/talks/jennifer_pahlka_coding_a_better_government.html</url>
+<description>Can government be run like the Internet, permissionless and open? Coder and activist Jennifer Pahlka believes it can -- and that apps, built quickly and cheaply, are a powerful new way to connect citizens to their governments -- and their neighbors.</description>
+<keywords>activism,cities,government,technology</keywords>
+<talkid>1381</talkid>
+<title>Jennifer Pahlka: Coding a better government</title>
+</doc>
+<doc docid="1346" genre="lectures">
+<url>http://www.ted.com/talks/danny_hillis_back_to_the_future_of_1994.html</url>
+<description>From deep in the archive, Danny Hillis outlines an intriguing theory of how and why technological change seems to be accelerating, by linking it to the very evolution of life itself. The presentation techniques he uses may look dated, but the ideas are as relevant as ever.</description>
+<keywords>future,science,technology</keywords>
+<talkid>1346</talkid>
+<title>Danny Hillis: Back to the future </title>
+</doc>
+<doc docid="1378" genre="lectures">
+<url>http://www.ted.com/talks/bryan_stevenson_we_need_to_talk_about_an_injustice.html</url>
+<description>In an engaging and personal talk -- with cameo appearances from his grandmother and Rosa Parks -- human rights lawyer Bryan Stevenson shares some hard truths about America's justice system, starting with a massive imbalance along racial lines: a third of the country's black male population has been incarcerated at some point in their lives. These issues, which are wrapped up in America's unexamined history, are rarely talked about with this level of candor, insight and persuasiveness.</description>
+<keywords>crime,culture,global issues,inequality,law</keywords>
+<talkid>1378</talkid>
+<title>Bryan Stevenson: We need to talk about an injustice</title>
+</doc>
+<doc docid="1375" genre="lectures">
+<url>http://www.ted.com/talks/peter_diamandis_abundance_is_our_future.html</url>
+<description>Onstage at TED2012, Peter Diamandis makes a case for optimism -- that we'll invent, innovate and create ways to solve the challenges that loom over us. "I'm not saying we don't have our set of problems; we surely do. But ultimately, we knock them down."</description>
+<keywords>cities,invention,sustainability,technology</keywords>
+<talkid>1375</talkid>
+<title> Abundance is our future</title>
+</doc>
+<doc docid="1337" genre="lectures">
+<url>http://www.ted.com/talks/brian_goldman_doctors_make_mistakes_can_we_talk_about_that.html</url>
+<description>Every doctor makes mistakes. But, says physician Brian Goldman, medicine's culture of denial keeps doctors from ever talking about those mistakes, or using them to learn and improve. Telling stories from his own long practice, he calls on doctors to start talking about being wrong. &lt;em&gt;&lt;/em&gt;</description>
+<keywords>communication,culture,medicine</keywords>
+<talkid>1337</talkid>
+<title>Brian Goldman: Doctors make mistakes. Can we talk about that?</title>
+</doc>
+<doc docid="1328" genre="lectures">
+<url>http://www.ted.com/talks/mikko_hypponen_three_types_of_online_attack.html</url>
+<description>Cybercrime expert Mikko Hypponen talks us through three types of online attack on our privacy and data -- and only two are considered crimes. "Do we blindly trust any future government? Because any right we give away, we give away for good." &lt;em&gt;&lt;/em&gt;</description>
+<keywords>Internet,crime,data,politics,technology</keywords>
+<talkid>1328</talkid>
+<title>Mikko Hypponen: Three types of online attack</title>
+</doc>
+<doc docid="1404" genre="lectures">
+<url>http://www.ted.com/talks/ayah_bdeir_building_blocks_that_blink_beep_and_teach.html</url>
+<description>Imagine a set of electronics as easy to play with as Legos. Fellow Ayah Bdeir introduces littleBits, a set of simple, interchangeable blocks that make programming as simple and important a part of creativity as snapping blocks together.</description>
+<keywords>creativity,education,technology</keywords>
+<talkid>1404</talkid>
+<title>Ayah Bdeir: Building blocks that blink, beep and teach</title>
+</doc>
+</refset>
+</mteval>

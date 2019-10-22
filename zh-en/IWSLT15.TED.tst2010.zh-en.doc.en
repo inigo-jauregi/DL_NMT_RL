@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mteval>
+<refset setid="iwslt2015-tst2010" srclang="chinese" trglang="english" refid="ref">
+<doc docid="805" genre="lectures">
+<url>http://www.ted.com/talks/robert_gupta.html</url>
+<description>Robert Gupta, violinist with the LA Philharmonic, talks about a violin lesson he once gave to a brilliant, schizophrenic musician -- and what he learned. Called back onstage later, Gupta plays his own transcription of the prelude from Bach's Cello Suite No. 1.</description>
+<keywords>arts,brain,education,entertainment,live music,music,violin</keywords>
+<talkid>805</talkid>
+<title>Robert Gupta: Music is medicine, music is sanity</title>
+</doc>
+<doc docid="790" genre="lectures">
+<url>http://www.ted.com/talks/dan_barber_how_i_fell_in_love_with_a_fish.html</url>
+<description>Chef Dan Barber squares off with a dilemma facing many chefs today: how to keep fish on the menu. With impeccable research and deadpan humor, he chronicles his pursuit of a sustainable fish he could love, and the foodie's honeymoon he's enjoyed since discovering an outrageously delicious fish raised using a revolutionary farming method in Spain.</description>
+<keywords>agriculture,biology,environment,food,health</keywords>
+<talkid>790</talkid>
+<title>Dan Barber: How I fell in love with a fish</title>
+</doc>
+<doc docid="783" genre="lectures">
+<url>http://www.ted.com/talks/gary_flake_is_pivot_a_turning_point_for_web_exploration.html</url>
+<description>Gary Flake demos Pivot, a new way to browse and arrange massive amounts of images and data online. Built on breakthrough Seadragon technology, it enables spectacular zooms in and out of web databases, and the discovery of patterns and links invisible in standard web browsing.</description>
+<keywords>data,demo,interface design,technology,web</keywords>
+<talkid>783</talkid>
+<title>Gary Flake: is Pivot a turning point for web exploration?</title>
+</doc>
+<doc docid="785" genre="lectures">
+<url>http://www.ted.com/talks/james_cameron_before_avatar_a_curious_boy.html</url>
+<description>James Cameron's big-budget films create unreal worlds all their own. In this personal talk, he reveals his childhood fascination with the fantastic -- from reading science fiction to deep-sea diving -- and how it ultimately drove the success of his blockbuster hits "Aliens," "The Terminator," "Titanic" and "Avatar."</description>
+<keywords>adventure,entertainment,film,nature,oceans,storytelling,technology,writing</keywords>
+<talkid>785</talkid>
+<title>James Cameron: Before Avatar ... a curious boy</title>
+</doc>
+<doc docid="767" genre="lectures">
+<url>http://www.ted.com/talks/bill_gates.html</url>
+<description>At TED2010, Bill Gates unveils his vision for the world's energy future, describing the need for "miracles" to avoid planetary catastrophe and explaining why he's backing a dramatically different type of nuclear reactor. The necessary goal? Zero carbon emissions globally by 2050.</description>
+<keywords>business,energy,global issues,invention,science,technology</keywords>
+<talkid>767</talkid>
+<title>Bill Gates on energy: Innovating to zero!</title>
+</doc>
+<doc docid="837" genre="lectures">
+<url>http://www.ted.com/talks/tom_wujec_build_a_tower.html</url>
+<description>Tom Wujec presents some surprisingly deep research into the "marshmallow problem" -- a simple team-building exercise that involves dry spaghetti, one yard of tape and a marshmallow. Who can build the tallest tower with these ingredients? And why does a surprising group always beat the average?</description>
+<keywords>business,collaboration,culture,design,entertainment,psychology</keywords>
+<talkid>837</talkid>
+<title>Tom Wujec: Build a tower, build a team</title>
+</doc>
+<doc docid="824" genre="lectures">
+<url>http://www.ted.com/talks/michael_specter_the_danger_of_science_denial.html</url>
+<description>Vaccine-autism claims, "Frankenfood" bans, the herbal cure craze: All point to the public's growing fear of science and reason, says Michael Specter. He warns the trend spells disaster for human progress.</description>
+<keywords>global issues,medicine,religion,science,writing</keywords>
+<talkid>824</talkid>
+<title>Michael Specter: The danger of science denial</title>
+</doc>
+<doc docid="792" genre="lectures">
+<url>http://www.ted.com/talks/eric_mead_the_magic_of_the_placebo.html</url>
+<description>Sugar pills, injections of nothing -- studies show that, more often than you'd expect, placebos really work. At TEDMED, magician Eric Mead does a trick to prove that, even when you know something's not real, you can still react as powerfully as if it is. </description>
+<keywords>entertainment,illusion,magic,medicine,play,science</keywords>
+<talkid>792</talkid>
+<title>Eric Mead: The magic of the placebo</title>
+</doc>
+<doc docid="779" genre="lectures">
+<url>http://www.ted.com/talks/daniel_kahneman_the_riddle_of_experience_vs_memory.html</url>
+<description>Using examples from vacations to colonoscopies, Nobel laureate and founder of behavioral economics Daniel Kahneman reveals how our "experiencing selves" and our "remembering selves" perceive happiness differently. This new insight has profound implications for economics, public policy -- and our own self-awareness.</description>
+<keywords>brain,culture,economics,happiness,mind,philosophy,psychology,science</keywords>
+<talkid>779</talkid>
+<title>Daniel Kahneman: The riddle of experience vs. memory</title>
+</doc>
+<doc docid="799" genre="lectures">
+<url>http://www.ted.com/talks/jane_mcgonigal_gaming_can_make_a_better_world.html</url>
+<description>Games like World of Warcraft give players the means to save worlds, and incentive to learn the habits of heroes. What if we could harness this gamer power to solve real-world problems? Jane McGonigal says we can, and explains how.</description>
+<keywords>computers,design,entertainment,gaming,global issues,play</keywords>
+<talkid>799</talkid>
+<title>Jane McGonigal: Gaming can make a better world</title>
+</doc>
+<doc docid="769" genre="lectures">
+<url>http://www.ted.com/talks/aimee_mullins_the_opportunity_of_adversity.html</url>
+<description>The thesaurus might equate "disabled" with synonyms like "useless" and "mutilated," but ground-breaking runner Aimee Mullins is out to redefine the word. Defying these associations, she shows how adversity -- in her case, being born without shinbones -- actually opens the door for human potential.</description>
+<keywords>activism,happiness,health,heroism,prosthetics,social change,society</keywords>
+<talkid>769</talkid>
+<title>Aimee Mullins: The opportunity of adversity</title>
+</doc>
+</refset>
+</mteval>

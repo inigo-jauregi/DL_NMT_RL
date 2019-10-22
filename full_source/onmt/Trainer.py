@@ -412,7 +412,7 @@ class Trainer(object):
 
 		for batch, doc_index in true_batchs:
 			target_size = batch.tgt.size(0)
-			print ('Batch size: ',batch.batch_size)
+			# print ('Batch size: ',batch.batch_size)
 			# Truncated BPTT
 			if self.trunc_size:
 				trunc_size = self.trunc_size

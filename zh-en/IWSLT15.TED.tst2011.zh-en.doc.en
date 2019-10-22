@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mteval>
+<refset setid="iwslt2015-tst2011" srclang="chinese" trglang="english" refid="ref">
+<doc docid="1104" genre="lectures">
+<url>http://www.ted.com/talks/eythor_bender_demos_human_exoskeletons.html</url>
+<description>Eythor Bender of Berkeley Bionics brings onstage two amazing exoskeletons, HULC and eLEGS -- robotic add-ons that could one day allow a human to carry 200 pounds without tiring, or allow a wheelchair user to stand and walk. It's a powerful onstage demo, with implications for human potential of all kinds.</description>
+<keywords>design,science,technology</keywords>
+<talkid>1104</talkid>
+<title> Human exoskeletons -- for war and healing</title>
+</doc>
+<doc docid="1096" genre="lectures">
+<url>http://www.ted.com/talks/mark_bezos_a_life_lesson_from_a_volunteer_firefighter.html</url>
+<description>Volunteer firefighter Mark Bezos tells a story of an act of heroism that didn't go quite as expected -- but that taught him a big lesson: Don't wait to be a hero.</description>
+<keywords>community,compassion,culture</keywords>
+<talkid>1096</talkid>
+<title> A life lesson from a volunteer firefighter</title>
+</doc>
+<doc docid="1102" genre="lectures">
+<url>http://www.ted.com/talks/isabel_behncke_evolution_s_gift_of_play_from_bonobo_apes_to_humans.html</url>
+<description>With never-before-seen video, primatologist Isabel Behncke Izquierdo shows how bonobo ape society learns from constantly playing -- solo, with friends, even as a prelude to sex. Indeed, play appears to be the bonobos' key to problem-solving and avoiding conflict. If it works for our close cousins, why not for us?</description>
+<keywords>TED Fellows,animals,culture,play,science</keywords>
+<talkid>1102</talkid>
+<title>Isabel Behncke: Evolution's gift of play, from bonobo apes to humans</title>
+</doc>
+<doc docid="1166" genre="lectures">
+<url>http://www.ted.com/talks/alice_dreger_is_anatomy_destiny.html</url>
+<description>Alice Dreger works with people at the edge of anatomy, such as conjoined twins and intersexed people. In her observation, it's often a fuzzy line between male and female, among other anatomical distinctions. Which brings up a huge question: Why do we let our anatomy determine our fate? &lt;em&gt;&lt;/em&gt;</description>
+<keywords>culture,gender,politics</keywords>
+<talkid>1166</talkid>
+<title>Alice Dreger: Is anatomy destiny?</title>
+</doc>
+<doc docid="1161" genre="lectures">
+<url>http://www.ted.com/talks/jessi_arrington_wearing_nothing_new.html</url>
+<description>Designer Jessi Arrington packed nothing for but 7 pairs of undies, buying the rest of her clothes in thrift stores around LA. It's a meditation on conscious consumption -- wrapped in a rainbow of color and creativity.</description>
+<keywords>consumerism,creativity,culture,design</keywords>
+<talkid>1161</talkid>
+<title>Jessi Arrington: Wearing nothing new</title>
+</doc>
+<doc docid="1137" genre="lectures">
+<url>http://www.ted.com/talks/carlo_ratti_architecture_that_senses_and_responds.html</url>
+<description>With his team at SENSEable City Lab, MIT's Carlo Ratti makes cool things by sensing the data we create. He pulls from passive data sets -- like the calls we make, the garbage we throw away -- to create surprising visualizations of city life. And he and his team create dazzling interactive environments from moving water and flying light, powered by simple gestures caught through sensors.</description>
+<keywords>cities,design,entertainment,technology</keywords>
+<talkid>1137</talkid>
+<title>Carlo Ratti: Architecture that senses and responds</title>
+</doc>
+<doc docid="1171" genre="lectures">
+<url>http://www.ted.com/talks/camille_seaman_haunting_photos_of_ice.html</url>
+<description>Photographer Camille Seaman shoots icebergs, showing the world the complex beauty of these massive, ancient chunks of ice. Dive in to her photo slideshow, "The Last Iceberg."</description>
+<keywords>art,arts,glacier,global issues,photography</keywords>
+<talkid>1171</talkid>
+<title>Camille Seaman: Haunting photos of polar ice</title>
+</doc>
+<doc docid="1115" genre="lectures">
+<url>http://www.ted.com/talks/mick_ebeling_the_invention_that_unlocked_a_locked_in_artist.html</url>
+<description>The nerve disease ALS left graffiti artist TEMPT paralyzed from head to toe, forced to communicate blink by blink. In a remarkable talk at TEDActive, entrepreneur Mick Ebeling shares how he and a team of collaborators built an open-source invention that gave the artist -- and gives others in his circumstance -- the means to make art again.</description>
+<keywords>creativity,design,disease,invention,open-source,technology</keywords>
+<talkid>1115</talkid>
+<title>Mick Ebeling: The invention that unlocked a locked-in artist</title>
+</doc>
+<doc docid="1176" genre="lectures">
+<url>http://www.ted.com/talks/jok_church_a_circle_of_caring.html</url>
+<description>In this 3-minute talk, cartoonist and educator Jok Church tells a moving story of the teacher who cared for him when no one else did -- and how he returned the favor.</description>
+<keywords>culture,education,love,storytelling</keywords>
+<talkid>1176</talkid>
+<title>Jok Church: A circle of caring</title>
+</doc>
+<doc docid="1107" genre="lectures">
+<url>http://www.ted.com/talks/ralph_langner_cracking_stuxnet_a_21st_century_cyberweapon.html</url>
+<description>When first discovered in 2010, the Stuxnet computer worm posed a baffling puzzle. Beyond its sophistication loomed a more troubling mystery: its purpose. Ralph Langner and team helped crack the code that revealed this digital warhead's final target. In a fascinating look inside cyber-forensics, he explains how -- and makes a bold guess at its shocking origins.</description>
+<keywords>Iran,computers,government,nuclear energy,politics,science,technology,war</keywords>
+<talkid>1107</talkid>
+<title> Cracking Stuxnet, a 21st-century cyber weapon</title>
+</doc>
+<doc docid="1114" genre="lectures">
+<url>http://www.ted.com/talks/morgan_spurlock_the_greatest_ted_talk_ever_sold.html</url>
+<description>With humor and persistence, filmmaker Morgan Spurlock dives into the hidden but influential world of brand marketing, on his quest to make a completely sponsored film about sponsorship. </description>
+<keywords>Talks</keywords>
+<talkid>1114</talkid>
+<title> The greatest TED Talk ever sold</title>
+</doc>
+<doc docid="1144" genre="lectures">
+<url>http://www.ted.com/talks/amit_sood_building_a_museum_of_museums_on_the_web.html</url>
+<description>Imagine being able to see artwork in the greatest museums around the world without leaving your chair. Driven by his passion for art, Amit Sood tells the story of how he developed Art Project to let people do just that.</description>
+<keywords>art,arts,design,technology</keywords>
+<talkid>1144</talkid>
+<title>Amit Sood: Building a museum of museums on the web</title>
+</doc>
+<doc docid="1160" genre="lectures">
+<url>http://www.ted.com/talks/aaron_o_connell_making_sense_of_a_visible_quantum_object.html</url>
+<description>Physicists are used to the idea that subatomic particles behave according to the bizarre rules of quantum mechanics, completely different to human-scale objects. In a breakthrough experiment, Aaron O'Connell has blurred that distinction by creating an object that is visible to the unaided eye, but provably in two places at the same time. In this talk he suggests an intriguing way of thinking about the result.</description>
+<keywords>philosophy,physics,science</keywords>
+<talkid>1160</talkid>
+<title>Aaron O'Connell: Making sense of a visible quantum object</title>
+</doc>
+<doc docid="1165" genre="lectures">
+<url>http://www.ted.com/talks/paul_romer_the_world_s_first_charter_city.html</url>
+<description>Back in 2009, Paul Romer unveiled the idea for a "charter city" -- a new kind of city with rules that favor democracy and trade. This year, at TED2011, he tells the story of how such a city might just happen in Honduras ... with a little help from his TEDTalk.</description>
+<keywords>business,cities,culture,design,global issues,politics</keywords>
+<talkid>1165</talkid>
+<title>Paul Romer: The world's first charter city?</title>
+</doc>
+</refset>
+</mteval>
