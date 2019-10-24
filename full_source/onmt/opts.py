@@ -142,10 +142,10 @@ def model_opts(parser):
 					   help='Lambda value for coverage.')
 
 	# My new options
-	group.add_argument('-train_type', type=str, default='NLL',
-					   help="OPTIONS:"
-							"  -> NLL"
-							"  -> REINFORCE")
+	group.add_argument('-train_validate', type=bool, default=False,
+					   help="Validation every certain batches")
+	group.add_argument('-RISK_ratio', type=float, default=0.0,
+					   help="Ratio of using reinforcement learning")
 
 	group = parser.add_argument_group('Beam')
 	group.add_argument('-beam_size', type=int, default=5,

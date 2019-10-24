@@ -184,7 +184,7 @@ class Beam(object):
             # print (self.next_out_prob)
             # print (self.next_out_prob[j].size())
             # print (self.next_out_prob[j][k].size())
-            # out_prob.append(self.next_out_prob[j][k])
+            out_prob.append(self.next_out_prob[j][k])
             k = self.prev_ks[j][k]
         return hyp[::-1], torch.stack(attn[::-1]), out_prob[::-1]
 

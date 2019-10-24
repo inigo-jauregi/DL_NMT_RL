@@ -155,7 +155,7 @@ class LossComputeBase(nn.Module):
 
         return batch_stats
 
-    def _stats(self, loss, scores, target):
+    def _stats(self, loss, scores, target,n_sentences=0):
         """
         Args:
             loss (:obj:`FloatTensor`): the loss computed by the loss criterion.
@@ -170,7 +170,7 @@ class LossComputeBase(nn.Module):
         num_correct = pred.eq(target) \
                           .masked_select(non_padding) \
                           .sum()
-        return onmt.Statistics(loss[0], non_padding.sum(), num_correct)
+        return onmt.Statistics(loss[0], non_padding.sum(), num_correct,n_sentences=n_sentences)
 
     def _bottle(self, v):
         return v.view(-1, v.size(2))
@@ -233,7 +233,7 @@ class NMTLossCompute(LossComputeBase):
         else:
             loss_data = loss.data.clone()
 
-        stats = self._stats(loss_data, scores.data, target.view(-1).data)
+        stats = self._stats(loss_data, scores.data, target.view(-1).data, n_sentences=target.size()[1])
         return loss, stats
 
 class REINFORCELossCompute(LossComputeBase):
@@ -378,6 +378,7 @@ class REINFORCELossCompute(LossComputeBase):
 
 
         # print (probs[0])
+        # print (probs)
         sum_probs = probs.sum(1).unsqueeze(1)
         # print (sum_probs.size())
         sum_probs2 = sum_probs.clone()

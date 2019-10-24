@@ -217,7 +217,7 @@ def make_base_model(model_opt, fields, gpu, checkpoint=None, train_part="all"):
 	context = make_context(model_opt, tgt_dict)
 
 	# Make NMTModel(= encoder + decoder).
-	if model_opt.train_type:
+	if model_opt.RISK_ratio > 0.0:
 		scorer = onmt.translate.GNMTGlobalScorer(model_opt.alpha,model_opt.beta,model_opt.coverage_penalty,
 												 model_opt.length_penalty)
 		model = NMTModel(encoder, decoder, context, context_type=model_opt.context_type,tgt_vocab=fields['tgt'].vocab,
