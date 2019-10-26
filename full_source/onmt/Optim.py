@@ -160,3 +160,25 @@ class Optim(object):
         self.last_ppl = ppl
         if self.method != 'sparseadam':
             self.optimizer.param_groups[0]['lr'] = self.lr
+
+
+
+    def update_learning_rate_mine(self, ppl, no_impr_ppl_num,need_to_save):
+        """
+        Decay learning rate if val perf does not improve
+        or we hit the start_decay_at limit.
+        """
+
+        true_best_ppl = False
+        if self.last_ppl is not None and ppl > self.last_ppl and no_impr_ppl_num == 9 and need_to_save < 5:
+            self.start_decay = True
+
+        if self.last_ppl is None or self.last_ppl > ppl:
+            self.last_ppl = ppl  # last_ppl == best ppl
+            true_best_ppl = True
+
+        if self.start_decay:
+            self.start_decay = False
+            self.lr = self.lr * self.lr_decay
+            return True, true_best_ppl, self.lr
+        return False, true_best_ppl, self.lr

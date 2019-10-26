@@ -82,7 +82,7 @@ def lazily_load_dataset_mine(corpus_type,opt):
         yield lazy_dataset_loader(pt, corpus_type)
 
 
-def make_dataset_iter_mine(datasets, fields, opt, is_train=True):
+def make_dataset_iter_mine(datasets, fields, opt, is_train=True, train_part='sentences'):
     """
     This returns user-defined train/validate data iterator for the trainer
     to iterate over during each train epoch. We implement simple
@@ -113,7 +113,7 @@ def make_dataset_iter_mine(datasets, fields, opt, is_train=True):
     device = opt.gpuid[0] if opt.gpuid else -1
 
     return DatasetLazyIter_mine(datasets, fields, batch_size, batch_size_fn,
-                           device, is_train)
+                           device, is_train, train_part)
 
 class DatasetLazyIter_mine(object):
     """ An Ordered Dataset Iterator, supporting multiple datasets,
@@ -129,13 +129,14 @@ class DatasetLazyIter_mine(object):
     """
 
     def __init__(self, datasets, fields, batch_size, batch_size_fn,
-                 device, is_train):
+                 device, is_train,train_part):
         self.datasets = datasets
         self.fields = fields
         self.batch_size = batch_size
         self.batch_size_fn = batch_size_fn
         self.device = device
         self.is_train = is_train
+        self.train_part = train_part
 
         self.cur_iter = self._next_dataset_iterator(datasets)
         # We have at least one dataset.
@@ -169,12 +170,21 @@ class DatasetLazyIter_mine(object):
 
         # Sort batch by decreasing lengths of sentence required by pytorch.
         # sort=False means "Use dataset's sortkey instead of iterator's".
-        return onmt.io.OrderedIterator(
-            dataset=self.cur_dataset, batch_size=self.batch_size,
-            batch_size_fn=self.batch_size_fn,
-            device=self.device, train=self.is_train,
-            sort=False, sort_within_batch=True,
-            repeat=False)
+        if self.train_part == 'sentences':
+            return onmt.io.OrderedIterator(
+				dataset=self.cur_dataset, batch_size=self.batch_size,
+				batch_size_fn=self.batch_size_fn,
+				device=self.device, train=self.is_train,
+				sort=False, sort_within_batch=True,
+				repeat=False)
+        else:
+            return onmt.io.DocumentIterator(
+				dataset=self.cur_dataset, batch_size=self.batch_size,
+				batch_size_fn=self.batch_size_fn,
+				device=self.device, train=self.is_train,
+				sort_within_batch=False, shuffle=False
+			)
+
 
 class Statistics(object):
 	"""
@@ -314,7 +324,7 @@ class Trainer(object):
 		self.model.train()
 
 	def train(self, train_iter, epoch, report_func=None, train_part='all', model_opt=None, fields=None, start=None,data=None,
-			  no_impr_ppl_num=0,saved_models=0,need_to_save=1,string_saved_model=None,opt=None):
+			  no_impr_ppl_num=0,saved_models=0,need_to_save=1,string_saved_model=None,opt=None, batch_number=None):
 		""" Train next epoch.
 		Args:
 			train_iter: training data iterator
@@ -342,6 +352,7 @@ class Trainer(object):
 		doc_index = None
 		num_batches = len(train_iter)
 		for i, batch in enumerate(train_iter):
+			batch_number+=1
 			if isinstance(batch, tuple):  #if isinstance == document_iterator
 				batch, doc_index = batch
 			cur_dataset = train_iter.get_cur_dataset()
@@ -366,7 +377,7 @@ class Trainer(object):
 				else:
 					self._gradient_accumulation(
 							true_batchs, total_stats,
-							report_stats, normalization, train_part, fields['tgt'].vocab)
+							report_stats, normalization, train_part)
 
 				# if report_func is not None:
 				# 		report_stats = report_func(
@@ -394,10 +405,10 @@ class Trainer(object):
 						report_stats.output(epoch, i, 0000, start)
 
 
-			if (i+1) % 500 == 0 and model_opt.train_validate:
-				valid_iter = make_dataset_iter_mine(lazily_load_dataset_mine("valid", opt),
-													fields, opt, is_train=False)
-				valid_stats = self.validate(valid_iter)
+			if (i+1) % 4 == 0 and model_opt.train_validate:
+				valid_iter = make_dataset_iter_mine(lazily_load_dataset_mine("valid",opt),
+													fields, opt, is_train=False,train_part=train_part)
+				valid_stats = self.validate(valid_iter, train_part)
 				print ('Validation perplexity: %g' % valid_stats.ppl())
 				print ('Validation accuracy: %g' % valid_stats.accuracy())
 
@@ -462,160 +473,163 @@ class Trainer(object):
 					# Finish the training
 					break
 
-		if len(true_batchs) > 0:
-			self._gradient_accumulation(
-					true_batchs, total_stats,
-					report_stats, normalization, train_part)
-			true_batchs = []
-
-		return total_stats
-
-	def REINFORCE_train(self, train_iter, epoch, report_func=None, train_part='all', data=None,logger=None, no_impr_ppl_num=0,
-                       saved_models=0,need_to_save=1,model_opt=None,fields=None,
-                       string_saved_model=None,opt=None):
-		""" Train next epoch.
-		Args:
-			train_iter: training data iterator
-			epoch(int): the epoch number
-			report_func(fn): function for logging
-
-		Returns:
-			stats (:obj:`onmt.Statistics`): epoch loss statistics
-		"""
-		total_stats = Statistics()
-		report_stats = Statistics()
-		idx = 0
-		true_batchs = []
-		accum = 0
-		normalization = 0.
-		try:
-			add_on = 0
-			if len(train_iter) % self.grad_accum_count > 0:
-				add_on += 1
-			num_batches = len(train_iter) / self.grad_accum_count + add_on
-		except NotImplementedError:
-			# Dynamic batching
-			num_batches = -1
-		start = time.time()
-		doc_index = None
-		for i, batch in enumerate(train_iter):
-			#if i > 1800:
-			print (i)
-			# print (batch.batch_size)
-			if isinstance(batch, tuple):
-				batch, doc_index = batch
-			cur_dataset = train_iter.get_cur_dataset()
-			self.train_loss.cur_dataset = cur_dataset
-
-			true_batchs.append((batch, doc_index))
-			accum += 1
-			if self.norm_method == "tokens":
-				num_tokens = batch.tgt[1:].data.view(-1) \
-					.ne(self.train_loss.padding_idx).sum()
-				normalization += num_tokens
-			else:
-				normalization += batch.batch_size
-
-			if accum == self.grad_accum_count:
-				self._gradient_accumulation(
-						true_batchs, total_stats,
-						report_stats, normalization, train_part,data=data,thisBatch=batch,REINFORCE=True)
-
-				# if report_func is not None:
-				# 		report_stats = report_func(
-				# 				epoch, idx, num_batches,
-				# 				self.progress_step,
-				# 				total_stats.start_time, self.optim.lr,
-				# 				report_stats)
-				# 		self.progress_step += 1
-
-				true_batchs = []
-				accum = 0
-				normalization = 0.
-				idx += 1
-
-			if (i+1) % 50 == 0:
-
-				report_stats.output_REINFORCE(1,i,0000,start)
-
-
-				valid_iter = make_dataset_iter_mine(lazily_load_dataset_mine("valid", logger, opt),
-													fields, opt, is_train=False)
-				valid_stats = self.validate(valid_iter)
-				logger.info('Validation perplexity: %g' % valid_stats.ppl())
-				logger.info('Validation accuracy: %g' % valid_stats.accuracy())
-
-				# Check perplexity and update the learning rate
-				decay, best_true, lr = self.epoch_step_mine(valid_stats.ppl(), no_impr_ppl_num, need_to_save)
-
-				if best_true:
-					no_impr_ppl_num = 0
-					# Save best model with the index I would say
-					print("Saving best model in validation so far!")
-					if saved_models < need_to_save:
-						print('Save new ' + str(need_to_save))
-						# Drop a checkpoint here
-						saved_models += 1
-						aux = copy.deepcopy(fields)
-						string_saved_model = self.drop_checkpoint_mine(model_opt, epoch, aux,
-																	   valid_stats, saved_models)
-
-
-
-					elif saved_models == need_to_save:
-						print('Overwrite ' + str(need_to_save))
-						# Delete old
-						os.remove(string_saved_model)
-						aux = copy.deepcopy(fields)
-						# Save new
-						string_saved_model = self.drop_checkpoint_mine(model_opt, epoch, aux,
-																	   valid_stats, saved_models)
-
-				if decay:
-					if saved_models < need_to_save:
-						print('Save new ' + str(need_to_save))
-						# Drop a checkpoint here
-						saved_models += 1
-						aux = copy.deepcopy(fields)
-						string_not_good = self.drop_checkpoint_mine(model_opt, epoch, aux,
-																	valid_stats, saved_models)
-					aux = copy.deepcopy(fields)
-					logger.info("Decaying learning rate to %g" % self.optim.lr)
-					no_impr_ppl_num = 0
-					need_to_save += 1
-					# Load the parameters of the previous best model
-					logger.info('Loading checkpoint from %s' % string_saved_model)
-					checkpoint = torch.load(string_saved_model, map_location=lambda storage, loc: storage)
-					self.model = self.build_model_mine(model_opt, opt, aux, checkpoint, logger)
-					self.optim = self.build_optim_mine(self.model, checkpoint, logger, opt)
-					self.optim.lr = lr
-					self.optim.optimizer.param_groups[0]['lr'] = lr
-					logger.info("Confirm new learning rate to %g" % self.optim.lr)
-
-				if decay == False and best_true == False:
-					no_impr_ppl_num += 1
-
-				if no_impr_ppl_num == 20:
-					if saved_models < need_to_save:
-						print('Save new ' + str(need_to_save))
-						# Drop a checkpoint here
-						saved_models += 1
-						aux = copy.deepcopy(fields)
-						string_saved_model = self.drop_checkpoint_mine(model_opt, epoch, aux,
-																	   valid_stats, saved_models)
-					# Finish the training
-					break
-
-			# if i == 500:
-			# 	break
-
 		# if len(true_batchs) > 0:
 		# 	self._gradient_accumulation(
 		# 			true_batchs, total_stats,
 		# 			report_stats, normalization, train_part)
 		# 	true_batchs = []
 
-		return total_stats
+		if model_opt.train_validate:
+			return total_stats
+
+		return total_stats, no_impr_ppl_num,saved_models,need_to_save,string_saved_model,batch_number,epoch
+
+	# def REINFORCE_train(self, train_iter, epoch, report_func=None, train_part='all', data=None,logger=None, no_impr_ppl_num=0,
+     #                   saved_models=0,need_to_save=1,model_opt=None,fields=None,
+     #                   string_saved_model=None,opt=None):
+	# 	""" Train next epoch.
+	# 	Args:
+	# 		train_iter: training data iterator
+	# 		epoch(int): the epoch number
+	# 		report_func(fn): function for logging
+    #
+	# 	Returns:
+	# 		stats (:obj:`onmt.Statistics`): epoch loss statistics
+	# 	"""
+	# 	total_stats = Statistics()
+	# 	report_stats = Statistics()
+	# 	idx = 0
+	# 	true_batchs = []
+	# 	accum = 0
+	# 	normalization = 0.
+	# 	try:
+	# 		add_on = 0
+	# 		if len(train_iter) % self.grad_accum_count > 0:
+	# 			add_on += 1
+	# 		num_batches = len(train_iter) / self.grad_accum_count + add_on
+	# 	except NotImplementedError:
+	# 		# Dynamic batching
+	# 		num_batches = -1
+	# 	start = time.time()
+	# 	doc_index = None
+	# 	for i, batch in enumerate(train_iter):
+	# 		#if i > 1800:
+	# 		print (i)
+	# 		# print (batch.batch_size)
+	# 		if isinstance(batch, tuple):
+	# 			batch, doc_index = batch
+	# 		cur_dataset = train_iter.get_cur_dataset()
+	# 		self.train_loss.cur_dataset = cur_dataset
+
+		# 	true_batchs.append((batch, doc_index))
+		# 	accum += 1
+		# 	if self.norm_method == "tokens":
+		# 		num_tokens = batch.tgt[1:].data.view(-1) \
+		# 			.ne(self.train_loss.padding_idx).sum()
+		# 		normalization += num_tokens
+		# 	else:
+		# 		normalization += batch.batch_size
+        #
+		# 	if accum == self.grad_accum_count:
+		# 		self._gradient_accumulation(
+		# 				true_batchs, total_stats,
+		# 				report_stats, normalization, train_part,data=data,thisBatch=batch,REINFORCE=True)
+        #
+		# 		# if report_func is not None:
+		# 		# 		report_stats = report_func(
+		# 		# 				epoch, idx, num_batches,
+		# 		# 				self.progress_step,
+		# 		# 				total_stats.start_time, self.optim.lr,
+		# 		# 				report_stats)
+		# 		# 		self.progress_step += 1
+        #
+		# 		true_batchs = []
+		# 		accum = 0
+		# 		normalization = 0.
+		# 		idx += 1
+        #
+		# 	if (i+1) % 50 == 0:
+        #
+		# 		report_stats.output_REINFORCE(1,i,0000,start)
+        #
+        #
+		# 		valid_iter = make_dataset_iter_mine(lazily_load_dataset_mine("valid", logger, opt),
+		# 											fields, opt, is_train=False)
+		# 		valid_stats = self.validate(valid_iter,train_part)
+		# 		logger.info('Validation perplexity: %g' % valid_stats.ppl())
+		# 		logger.info('Validation accuracy: %g' % valid_stats.accuracy())
+        #
+		# 		# Check perplexity and update the learning rate
+		# 		decay, best_true, lr = self.epoch_step_mine(valid_stats.ppl(), no_impr_ppl_num, need_to_save)
+        #
+		# 		if best_true:
+		# 			no_impr_ppl_num = 0
+		# 			# Save best model with the index I would say
+		# 			print("Saving best model in validation so far!")
+		# 			if saved_models < need_to_save:
+		# 				print('Save new ' + str(need_to_save))
+		# 				# Drop a checkpoint here
+		# 				saved_models += 1
+		# 				aux = copy.deepcopy(fields)
+		# 				string_saved_model = self.drop_checkpoint_mine(model_opt, epoch, aux,
+		# 															   valid_stats, saved_models)
+        #
+        #
+        #
+		# 			elif saved_models == need_to_save:
+		# 				print('Overwrite ' + str(need_to_save))
+		# 				# Delete old
+		# 				os.remove(string_saved_model)
+		# 				aux = copy.deepcopy(fields)
+		# 				# Save new
+		# 				string_saved_model = self.drop_checkpoint_mine(model_opt, epoch, aux,
+		# 															   valid_stats, saved_models)
+        #
+		# 		if decay:
+		# 			if saved_models < need_to_save:
+		# 				print('Save new ' + str(need_to_save))
+		# 				# Drop a checkpoint here
+		# 				saved_models += 1
+		# 				aux = copy.deepcopy(fields)
+		# 				string_not_good = self.drop_checkpoint_mine(model_opt, epoch, aux,
+		# 															valid_stats, saved_models)
+		# 			aux = copy.deepcopy(fields)
+		# 			logger.info("Decaying learning rate to %g" % self.optim.lr)
+		# 			no_impr_ppl_num = 0
+		# 			need_to_save += 1
+		# 			# Load the parameters of the previous best model
+		# 			logger.info('Loading checkpoint from %s' % string_saved_model)
+		# 			checkpoint = torch.load(string_saved_model, map_location=lambda storage, loc: storage)
+		# 			self.model = self.build_model_mine(model_opt, opt, aux, checkpoint, logger)
+		# 			self.optim = self.build_optim_mine(self.model, checkpoint, logger, opt)
+		# 			self.optim.lr = lr
+		# 			self.optim.optimizer.param_groups[0]['lr'] = lr
+		# 			logger.info("Confirm new learning rate to %g" % self.optim.lr)
+        #
+		# 		if decay == False and best_true == False:
+		# 			no_impr_ppl_num += 1
+        #
+		# 		if no_impr_ppl_num == 20:
+		# 			if saved_models < need_to_save:
+		# 				print('Save new ' + str(need_to_save))
+		# 				# Drop a checkpoint here
+		# 				saved_models += 1
+		# 				aux = copy.deepcopy(fields)
+		# 				string_saved_model = self.drop_checkpoint_mine(model_opt, epoch, aux,
+		# 															   valid_stats, saved_models)
+		# 			# Finish the training
+		# 			break
+        #
+		# 	# if i == 500:
+		# 	# 	break
+        #
+		# # if len(true_batchs) > 0:
+		# # 	self._gradient_accumulation(
+		# # 			true_batchs, total_stats,
+		# # 			report_stats, normalization, train_part)
+		# # 	true_batchs = []
+        #
+		# return total_stats
 
 	def validate(self, valid_iter, valid_part):
 		""" Validate model.
@@ -631,6 +645,7 @@ class Trainer(object):
 		doc_index = None
 
 		for batch in valid_iter:
+			print (batch)
 			if isinstance(batch, tuple):
 				batch, doc_index = batch
 			cur_dataset = valid_iter.get_cur_dataset()

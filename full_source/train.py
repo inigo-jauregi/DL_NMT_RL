@@ -293,19 +293,22 @@ def train_model(model, fields, optim, data_type, model_opt, train_part,batch_siz
 	start_time = time.time()
 	if model_opt.train_validate:
 		print (' Train validate!')
+		epoch = opt.start_epoch
+		number_batch = 0
+		no_impr_ppl_num = 0
+		saved_models = 0
+		need_to_save = 1
+		string_saved_model = ""
 		while (True):
-			epoch = opt.start_epoch
-			number_batch = 0
-			no_impr_ppl_num = 0
-			saved_models = 0
-			need_to_save = 1
-			string_saved_model = ""
+
 			# 1. Train for one epoch on the training set.
 			train_iter = None
 			dataset = lazily_load_dataset("train")
 			train_iter = make_dataset_iter(dataset,fields, opt)
-			train_stats = trainer.train(train_iter, epoch, report_func, train_part, model_opt=model_opt, fields=fields, start=start_time,
-										data=dataset,)
+			train_stats,no_impr_ppl_num,saved_models,need_to_save,string_saved_model,batch_number,epoch\
+				= trainer.train(train_iter, epoch, report_func, train_part, model_opt=model_opt, fields=fields, start=start_time,
+										data=dataset,no_impr_ppl_num=no_impr_ppl_num,saved_models=saved_models,need_to_save=need_to_save,
+										string_saved_model=string_saved_model,opt=opt, batch_number=number_batch)
 			print('Train perplexity: %g' % train_stats.ppl())
 			print('Train accuracy: %g' % train_stats.accuracy())
 
