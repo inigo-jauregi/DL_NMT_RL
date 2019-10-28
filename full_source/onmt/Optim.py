@@ -170,7 +170,7 @@ class Optim(object):
         """
 
         true_best_ppl = False
-        if self.last_ppl is not None and ppl > self.last_ppl and no_impr_ppl_num == 9 and need_to_save < 5:
+        if self.last_ppl is not None and ppl > self.last_ppl and no_impr_ppl_num == 3 and need_to_save < 5:
             self.start_decay = True
 
         if self.last_ppl is None or self.last_ppl > ppl:

@@ -368,7 +368,7 @@ class REINFORCELossCompute(LossComputeBase):
 
             bleu_scores.append(bs_nBest)
 
-        bleu_scores = torch.FloatTensor(bleu_scores)#.cuda() #Cuda line
+        bleu_scores = torch.FloatTensor(bleu_scores).cuda() #Cuda line
 
         # print (bleu_scores.size())
 

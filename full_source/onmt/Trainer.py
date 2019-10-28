@@ -405,7 +405,7 @@ class Trainer(object):
 						report_stats.output(epoch, i, 0000, start)
 
 
-			if (i+1) % 4 == 0 and model_opt.train_validate:
+			if (i+1) % 400 == 0 and model_opt.train_validate:
 				valid_iter = make_dataset_iter_mine(lazily_load_dataset_mine("valid",opt),
 													fields, opt, is_train=False,train_part=train_part)
 				valid_stats = self.validate(valid_iter, train_part)
@@ -480,9 +480,9 @@ class Trainer(object):
 		# 	true_batchs = []
 
 		if model_opt.train_validate:
-			return total_stats
+			return total_stats, no_impr_ppl_num,saved_models,need_to_save,string_saved_model,batch_number,epoch
 
-		return total_stats, no_impr_ppl_num,saved_models,need_to_save,string_saved_model,batch_number,epoch
+		return total_stats
 
 	# def REINFORCE_train(self, train_iter, epoch, report_func=None, train_part='all', data=None,logger=None, no_impr_ppl_num=0,
      #                   saved_models=0,need_to_save=1,model_opt=None,fields=None,
@@ -645,7 +645,7 @@ class Trainer(object):
 		doc_index = None
 
 		for batch in valid_iter:
-			print (batch)
+			# print (batch)
 			if isinstance(batch, tuple):
 				batch, doc_index = batch
 			cur_dataset = valid_iter.get_cur_dataset()
