@@ -758,6 +758,7 @@ class Trainer(object):
 			self.model.zero_grad()
 
 		for batch, doc_index in true_batchs:
+			# print (doc_index)
 			target_size = batch.tgt.size(0)
 			# print ('Batch size: ',batch.batch_size)
 			# Truncated BPTT
@@ -799,7 +800,7 @@ class Trainer(object):
 				else:
 					batch_stats = self.REINFORCE_loss.sharded_compute_loss(
 						batch, cur_trunc=j,trunc_size=trunc_size, shard_size=self.shard_size,
-						normalization=normalization,ret=ret)
+						normalization=normalization,ret=ret, doc_index = doc_index)
 
 				#Delete ret
 				# del ret

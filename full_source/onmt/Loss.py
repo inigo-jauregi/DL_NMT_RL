@@ -69,18 +69,18 @@ class LossComputeBase(nn.Module):
         """
         return NotImplementedError
 
-    def _compute_loss(self, batch, output, target, **kwargs):
-        """
-        Compute the loss. Subclass must define this method.
-
-        Args:
-
-            batch: the current batch.
-            output: the predict output from the model.
-            target: the validate target to compare output with.
-            **kwargs(optional): additional info for computing loss.
-        """
-        return NotImplementedError
+    # def _compute_loss(self, batch, output, target, **kwargs):
+    #     """
+    #     Compute the loss. Subclass must define this method.
+    #
+    #     Args:
+    #
+    #         batch: the current batch.
+    #         output: the predict output from the model.
+    #         target: the validate target to compare output with.
+    #         **kwargs(optional): additional info for computing loss.
+    #     """
+    #     return NotImplementedError
 
     def monolithic_compute_loss(self, batch, output, attns):
         """
@@ -104,7 +104,7 @@ class LossComputeBase(nn.Module):
 
     def sharded_compute_loss(self, batch, output=None, attns=None,
                              cur_trunc=None, trunc_size=None, shard_size=None,
-                             normalization=None,ret=None):
+                             normalization=None,ret=None, doc_index=None):
         """Compute the forward loss and backpropagate.  Computation is done
         with shards and optionally truncation for memory efficiency.
 
@@ -134,7 +134,7 @@ class LossComputeBase(nn.Module):
         """
         batch_stats = onmt.Statistics()
         if ret:
-            loss, stats = self._compute_loss(batch,ret)
+            loss, stats = self._compute_loss(batch,ret,doc_index)
             # print (loss.requires_grad)
             #Normalization over sentences
             loss.div(float(batch.tgt.size()[1])).backward(retain_graph=True)
@@ -240,13 +240,14 @@ class REINFORCELossCompute(LossComputeBase):
     """
     Standard REINFORCE Loss Computation.
     """
-    def __init__(self, generator, tgt_vocab):
+    def __init__(self, generator, tgt_vocab, n_best):
         super(REINFORCELossCompute, self).__init__(generator, tgt_vocab)
 
         self.tgt_vocab = tgt_vocab
         weight = torch.ones(len(tgt_vocab))
         weight[self.padding_idx] = 0
         self.criterion = nn.NLLLoss(weight, size_average=False)
+        self.n_best = n_best
 
 
     def _make_shard_state(self, batch, output, range_, attns=None):
@@ -255,23 +256,34 @@ class REINFORCELossCompute(LossComputeBase):
             "target": batch.tgt[range_[0] + 1: range_[1]],
         }
 
-    def _compute_loss(self, batch, ret):
+    def _compute_loss(self, batch, ret, doc_index):
 
         #RET obtain the hypothesis
         top_hyp = ret['predictions']
         top_probabilities = ret['out_prob']
         #AND ALSO THE REFERENCE
         tgt = batch.tgt
+        batch_num = tgt.size()[1]
 
         # print ('top_hyp ',len(top_hyp))
         # print ('top_probabilities ', len(top_probabilities))
         # print ('tgt ',tgt.size())
+        bleu_doc = True
+        if bleu_doc:
+            sentences_pred, prob_per_word = self.words_probs_from_preds(top_hyp, top_probabilities, doc_index=doc_index,batch_num=batch_num)
+            sentences_gt = self.obtain_words_from_tgt(tgt, doc_index=doc_index)
+            # print (doc_index)
+            # print (prob_per_word.size())
+            # print (len(sentences_pred[0][0]))
+            # print (len(sentences_pred[0][1]))
+            # print (len(sentences_gt[0]))
+        else:
+            sentences_pred, prob_per_word = self.words_probs_from_preds(top_hyp,top_probabilities)
+            # print (prob_per_word.size())
+            # print ('i am printing')
+            sentences_gt = self.obtain_words_from_tgt(tgt)
 
-        sentences_pred, prob_per_word = self.words_probs_from_preds(top_hyp,top_probabilities)
-        # print (prob_per_word.size())
-        # print ('i am printing')
-        sentences_gt = self.obtain_words_from_tgt(tgt)
-
+        #Compute reward!
         #NEED A FUNCTION TO COMPUTE BLEU SCORE
         bleu_scores = self.BLEU_score(sentences_pred,sentences_gt)
         # print (bleu_scores.size()[0])
@@ -291,63 +303,166 @@ class REINFORCELossCompute(LossComputeBase):
         stats = onmt.Statistics(loss_data.item(), n_sentences=tgt.size()[1])
         return loss, stats
 
-    def words_probs_from_preds(self,hyps,probs):
-        sentences = []
-        probs_per_word = []
-        for i in range(len(hyps)):
-            sentences_in_beam = []
-            probs_in_beam =[]
-            for j in range(len(hyps[i])):
+    def words_probs_from_preds(self, hyps, probs, doc_index=None, batch_num=None):
+        # print (doc_index)
+        if type(doc_index) is list:
+            if len(doc_index)>=1:
+                new_doc_lines = [el for el in doc_index]
+            else:
+                new_doc_lines = [0]
+
+            # Treat separately each hypothesis
+            sen_best = []
+            prob_best = []
+            for i in range(self.n_best):
+                # Iterate over the sentences in the batch
+                # But stop if a doc_index is added
+                sentences_batch_in_beam = []
+                probs_batch_in_beam = []
+                count_doc_lines = 0
+                current_doc_break= new_doc_lines[count_doc_lines]
                 words = []
                 probability_sen = []
-                for k in range(len(hyps[i][j])):
-                    word = self.tgt_vocab.itos[hyps[i][j][k]]
-                    words.append(word)
-                    prob = probs[i][j][k][0,hyps[i][j][k]]
-                    # print (prob)
-                    # print (prob.requires_grad)
-                    #print (prob)
-                    # prob = torch.log(prob)  THERE IS NO NEED FOR BECAUSE WE HAVE USED LOG-SOFTMAX BEFORE
-                    probability_sen.append(prob)
+                for j in range(batch_num):
+                    # Then go thorugh the probabilities of the word.
+                    # Compute a single document probability??? I would say yes.
+                    if j == current_doc_break and current_doc_break!=0:
+                        sentences_batch_in_beam.append(words)
+                        prob_sentence = torch.exp(torch.stack(probability_sen, dim=0).sum(dim=0) / len(probability_sen))
+                        probs_batch_in_beam.append(prob_sentence)
+                        words = []
+                        probability_sen = []
+                        count_doc_lines+=1
+                        if len(new_doc_lines) > count_doc_lines:
+                            current_doc_break = new_doc_lines[count_doc_lines]
+                    elif j==current_doc_break and current_doc_break==0:
+                        words = []
+                        probability_sen = []
+                        count_doc_lines += 1
+                        if len(new_doc_lines) > count_doc_lines:
+                            current_doc_break = new_doc_lines[count_doc_lines]
+                    # Iterate over the sentenc
+                    for k in range(len(hyps[j][i])):
+                        word = self.tgt_vocab.itos[hyps[j][i][k]]
+                        words.append(word)
+                        prob = probs[j][i][k][0, hyps[j][i][k]]
+                        probability_sen.append(prob)
 
-                sentences_in_beam.append(words)
-                # print (probability_sen[0])
-                prob_sentence = torch.exp(torch.stack(probability_sen,dim=0).sum(dim=0)/len(probability_sen))
+                prob_sentence = torch.exp(torch.stack(probability_sen, dim=0).sum(dim=0) / len(probability_sen))
+                sentences_batch_in_beam.append(words)
+                probs_batch_in_beam.append(prob_sentence)
 
-                # print (prob_sentence)
+                sen_best.append(sentences_batch_in_beam)
+                probs_batch_in_beam = torch.stack(probs_batch_in_beam,dim=0)
+                prob_best.append(probs_batch_in_beam)
 
-                # prob_sentence[prob_sentence!=prob_sentence]=0
-                # print (type(prob_sentence))
-                # print (prob_sentence)
-                probs_in_beam.append(prob_sentence)
+            # Print
+            probs_tensor = torch.stack(prob_best,dim=0).t()
+            # print (probs_tensor.size())
+            # print (probs_tensor)
 
-            sentences.append(sentences_in_beam)
-            probs_in_beam = torch.stack(probs_in_beam,dim=0)
-            probs_per_word.append(probs_in_beam)
-        probs_tensor = torch.stack(probs_per_word,dim=0)
+            # Change sentences
+            sentences = []
+            for i in range(len(sen_best[0])):
+                both_beams = []
+                for j in range(len(sen_best)):
+                    both_beams.append(sen_best[j][i])
+                sentences.append(both_beams)
 
-        #Log sum of the probabilities
-        #Prob I need to set an option for CUDA
-        #print (probs_tensor.requires_grad)
-        #probs_tensor = torch.Tensor(probs_per_word,requires_grad=True).cuda()
-        #print (probs_tensor.size())
+            # print(len(sentences))
+            # print(len(sentences[0]))
 
-        return sentences, probs_tensor.squeeze()
+            return sentences, probs_tensor
 
-    def obtain_words_from_tgt(self,tgt):
+        else:
+            sentences = []
+            probs_per_word = []
+            for i in range(len(hyps)):
+                sentences_in_beam = []
+                probs_in_beam =[]
+                for j in range(len(hyps[i])):
+                    words = []
+                    probability_sen = []
+                    for k in range(len(hyps[i][j])):
+                        word = self.tgt_vocab.itos[hyps[i][j][k]]
+                        words.append(word)
+                        prob = probs[i][j][k][0,hyps[i][j][k]]
+                        # print (prob)
+                        # print (prob.requires_grad)
+                        #print (prob)
+                        # prob = torch.log(prob)  THERE IS NO NEED FOR BECAUSE WE HAVE USED LOG-SOFTMAX BEFORE
+                        probability_sen.append(prob)
+
+                    sentences_in_beam.append(words)
+                    # print (probability_sen[0])
+                    prob_sentence = torch.exp(torch.stack(probability_sen,dim=0).sum(dim=0)/len(probability_sen))
+
+                    # print (prob_sentence)
+
+                    # prob_sentence[prob_sentence!=prob_sentence]=0
+                    # print (type(prob_sentence))
+                    # print (prob_sentence)
+                    probs_in_beam.append(prob_sentence)
+
+                sentences.append(sentences_in_beam)
+                probs_in_beam = torch.stack(probs_in_beam,dim=0)
+                probs_per_word.append(probs_in_beam)
+
+            probs_tensor = torch.stack(probs_per_word,dim=0)
+
+
+
+            return sentences, probs_tensor.squeeze()
+
+    def obtain_words_from_tgt(self,tgt, doc_index=None):
         sentence_max_length, batch_size = tgt.size()
         padID = self.tgt_vocab.stoi['<blank>']
 
-        sentences = []
-        for i in range(batch_size):
-            words = []
-            for j in range(sentence_max_length):
-                if tgt[j,i] == padID:
-                    break
-                words.append(self.tgt_vocab.itos[tgt[j,i]])
+        if type(doc_index) is list:
+            if len(doc_index)>=1:
+                new_doc_lines = [el for el in doc_index]
+            else:
+                new_doc_lines = [0]
 
+            sentences = []
+
+            count_doc_lines = 0
+            current_doc_break = new_doc_lines[count_doc_lines]
+            words = []
+            for i in range(batch_size):
+                # Then go thorugh the probabilities of the word.
+                # Compute a single document probability??? I would say yes.
+                if i == current_doc_break and current_doc_break != 0:
+                    sentences.append(words)
+                    words = []
+                    count_doc_lines += 1
+                    if len(new_doc_lines) > count_doc_lines:
+                        current_doc_break = new_doc_lines[count_doc_lines]
+                elif i == current_doc_break and current_doc_break == 0:
+                    words = []
+                    count_doc_lines += 1
+                    if len(new_doc_lines) > count_doc_lines:
+                        current_doc_break = new_doc_lines[count_doc_lines]
+                # words = []
+                for j in range(sentence_max_length):
+                    if tgt[j, i] == padID:
+                        break
+                    words.append(self.tgt_vocab.itos[tgt[j, i]])
             sentences.append(words)
 
+        else:
+
+            sentences = []
+            for i in range(batch_size):
+                words = []
+                for j in range(sentence_max_length):
+                    if tgt[j,i] == padID:
+                        break
+                    words.append(self.tgt_vocab.itos[tgt[j,i]])
+
+                sentences.append(words)
+
+        # print (len(sentences))
         return sentences
 
     def BLEU_score(self,predictions,ground_truth):
