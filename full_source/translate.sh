@@ -1,12 +1,24 @@
-python translate.py -model zh-en_models/HAN_join_newCode_plus_RL_0.33/seed_1/EPOCH_acc_43.31_ppl_22.66_e1_num1.pt -src ../zh-en/IWSLT15.TED.dev2010.tc.zh -doc ../zh-en/IWSLT15.TED.dev2010.zh-en.doc -output zh-en_models/HAN_join_newCode_plus_RL_0.33/seed_1/dev/dev1.txt -translate_part all -batch_size 1000 -gpu 0
+#python translate.py -model zh-en_models/HAN_join_newCode_plus_RL_0.33/seed_1/EPOCH_acc_43.31_ppl_22.66_e1_num1.pt -src ../zh-en/IWSLT15.TED.dev2010.tc.zh -doc ../zh-en/IWSLT15.TED.dev2010.zh-en.doc -output zh-en_models/HAN_join_newCode_plus_RL_0.33/seed_1/dev/dev1.txt -translate_part all -batch_size 1000 -gpu 0
 
-python translate.py -model zh-en_models/HAN_join_newCode_plus_RL_0.33/seed_1/EPOCH_acc_43.38_ppl_22.65_e1_num2.pt -src ../zh-en/IWSLT15.TED.dev2010.tc.zh -doc ../zh-en/IWSLT15.TED.dev2010.zh-en.doc -output zh-en_models/HAN_join_newCode_plus_RL_0.33/seed_1/dev/dev2.txt -translate_part all -batch_size 1000 -gpu 0
+#python translate.py -model zh-en_models/HAN_join_newCode_plus_RL_0.33/seed_1/EPOCH_acc_43.38_ppl_22.65_e1_num2.pt -src ../zh-en/IWSLT15.TED.dev2010.tc.zh -doc ../zh-en/IWSLT15.TED.dev2010.zh-en.doc -output zh-en_models/HAN_join_newCode_plus_RL_0.33/seed_1/dev/dev2.txt -translate_part all -batch_size 1000 -gpu 0
 
-python translate.py -model zh-en_models/HAN_join_newCode_plus_RL_0.33/seed_1/EPOCH_acc_43.27_ppl_23.02_e1_num3.pt -src ../zh-en/IWSLT15.TED.dev2010.tc.zh -doc ../zh-en/IWSLT15.TED.dev2010.zh-en.doc -output zh-en_models/HAN_join_newCode_plus_RL_0.33/seed_1/dev/dev3.txt -translate_part all -batch_size 1000 -gpu 0
+#python translate.py -model zh-en_models/HAN_join_newCode_plus_RL_0.33/seed_1/EPOCH_acc_43.27_ppl_23.02_e1_num3.pt -src ../zh-en/IWSLT15.TED.dev2010.tc.zh -doc ../zh-en/IWSLT15.TED.dev2010.zh-en.doc -output zh-en_models/HAN_join_newCode_plus_RL_0.33/seed_1/dev/dev3.txt -translate_part all -batch_size 1000 -gpu 0
 
-python translate.py -model zh-en_models/HAN_join_newCode_plus_RL_0.33/seed_1/EPOCH_acc_43.25_ppl_22.90_e1_num4.pt -src ../zh-en/IWSLT15.TED.dev2010.tc.zh -doc ../zh-en/IWSLT15.TED.dev2010.zh-en.doc -output zh-en_models/HAN_join_newCode_plus_RL_0.33/seed_1/dev/dev4.txt -translate_part all -batch_size 1000 -gpu 0
+python translate.py -model zh-en_models/HAN_join_newCode_plus_RL/seed_1/EPOCH_acc_42.83_ppl_24.31_e1_num4.pt -src ../zh-en/text_2011_2013.zh -doc ../zh-en/doc_2011_2013.txt -output zh-en_models/HAN_join_newCode_plus_RL/seed_1/test_2011_2013_ppl_num4.txt -translate_part all -batch_size 1000 -gpu 0
 
-python translate.py -model zh-en_models/HAN_join_newCode_plus_RL_0.33/seed_1/EPOCH_acc_42.92_ppl_23.01_e2_num5.pt -src ../zh-en/IWSLT15.TED.dev2010.tc.zh -doc ../zh-en/IWSLT15.TED.dev2010.zh-en.doc -output zh-en_models/HAN_join_newCode_plus_RL_0.33/seed_1/dev/dev5.txt -translate_part all -batch_size 1000 -gpu 0
+#python translate.py -model zh-en_models/BASELINE_IWSLT2015_newCode/seed_1/EPOCH_acc_42.66_ppl_23.58_e16.pt -src ../test_out/TED_zh-en/IWSLT15.TED.tst.tc.zh -doc ../doc.txt -output zh-en_models/BASELINE_IWSLT2015_newCode/seed_1/test_all_acc.txt -translate_part all -batch_size 1000 -gpu 0
+
+#python translate.py -model zh-en_models/HAN_join_newCode/ppl/seed_1/EPOCH_acc_43.17_ppl_22.94_e1.pt -src ../test_out/TED_zh-en/IWSLT15.TED.tst.tc.zh -doc ../doc.txt -output zh-en_models/HAN_join_newCode/ppl/seed_1/test_all_e1.txt -translate_part all -batch_size 1000 -gpu 0
+
+#python translate.py -model zh-en_models/HAN_join_newCode/ppl/seed_1/EPOCH_acc_42.77_ppl_22.99_e2.pt -src ../test_out/TED_zh-en/IWSLT15.TED.tst.tc.zh -doc ../doc.txt -output zh-en_models/HAN_join_newCode/ppl/seed_1/test_all_e2.txt -translate_part all -batch_size 1000 -gpu 0
+
+#python translate.py -model zh-en_models/HAN_join_newCode/acc/seed_1/EPOCH_acc_43.37_ppl_22.51_e1.pt -src ../test_out/TED_zh-en/IWSLT15.TED.tst.tc.zh -doc ../doc.txt -output zh-en_models/HAN_join_newCode/acc/seed_1/test_all_e1.txt -translate_part all -batch_size 1000 -gpu 0
+
+#python translate.py -model zh-en_models/HAN_join_newCode/acc/seed_1/EPOCH_acc_43.14_ppl_23.05_e2.pt -src ../test_out/TED_zh-en/IWSLT15.TED.tst.tc.zh -doc ../doc.txt -output zh-en_models/HAN_join_newCode/acc/seed_1/test_all_e2.txt -translate_part all -batch_size 1000 -gpu 0
+
+#python translate.py -model zh-en_models/HAN_join_newCode_plus_RL_0.33/seed_1/EPOCH_acc_43.25_ppl_22.90_e1_num4.pt -src ../test_out/TED_zh-en/IWSLT15.TED.tst.tc.zh -doc ../doc.txt -output zh-en_models/HAN_join_newCode_plus_RL_0.33/seed_1/test_all_e4.txt -translate_part all -batch_size 1000 -gpu 0
+
+#python translate.py -model zh-en_models/HAN_join_newCode_plus_RL_0.33/seed_1/EPOCH_acc_42.92_ppl_23.01_e2_num5.pt -src ../zh-en/IWSLT15.TED.dev2010.tc.zh -doc ../zh-en/IWSLT15.TED.dev2010.zh-en.doc -output zh-en_models/HAN_join_newCode_plus_RL_0.33/seed_1/dev/dev5.txt -translate_part all -batch_size 1000 -gpu 0
 
 #python translate.py -model zh-en_models/BASELINE_IWSLT2015_newCode/seed_1/EPOCH_acc_42.66_ppl_23.58_e16.pt -src ../zh-en/text_2011_2013.zh -doc ../zh-en/doc_2011_2013.txt -output zh-en_models/BASELINE_IWSLT2015_newCode/seed_1/test_2011_2013_acc.txt -translate_part all -batch_size 1000 -gpu 1
 
