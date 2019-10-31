@@ -147,6 +147,10 @@ def model_opts(parser):
 	group.add_argument('-RISK_ratio', type=float, default=0.0,
 					   help="Ratio of using reinforcement learning")
 
+	# Reward options
+	group.add_argument('-doc_bleu', type=bool, default=False,
+					   help="Document-level BLEU reward")
+
 	group = parser.add_argument_group('Beam')
 	group.add_argument('-beam_size', type=int, default=5,
 					   help='Beam size')

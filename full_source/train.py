@@ -244,7 +244,7 @@ def make_dataset_iter(datasets, fields, opt, is_train=True):
 						   device, is_train, opt.train_part)
 
 
-def make_loss_compute(model, tgt_vocab, opt, train=True, RL_loss = False, n_best=None):
+def make_loss_compute(model, tgt_vocab, opt, train=True, RL_loss = False, n_best=None, bleu_doc=False):
 	"""
 	This returns user-defined LossCompute object, which is used to
 	compute loss in train/validate process. You can implement your
@@ -260,7 +260,7 @@ def make_loss_compute(model, tgt_vocab, opt, train=True, RL_loss = False, n_best
 				model.generator, tgt_vocab,
 				label_smoothing=opt.label_smoothing if train else 0.0)
 		elif RL_loss==True:
-			compute = onmt.Loss.REINFORCELossCompute(model.generator, tgt_vocab, n_best)
+			compute = onmt.Loss.REINFORCELossCompute(model.generator, tgt_vocab, n_best, bleu_doc=bleu_doc)
 
 	if use_gpu(opt):
 		compute.cuda()
@@ -273,7 +273,7 @@ def train_model(model, fields, optim, data_type, model_opt, train_part,batch_siz
 	valid_loss = make_loss_compute(model, fields["tgt"].vocab, opt,train=False)
 
 	if model_opt.RISK_ratio > 0.0:
-		train_REINFORCE_loss = make_loss_compute(model, fields["tgt"].vocab, opt,RL_loss=True, n_best=model_opt.n_best)
+		train_REINFORCE_loss = make_loss_compute(model, fields["tgt"].vocab, opt,RL_loss=True, n_best=model_opt.n_best, bleu_doc=model_opt.bleu_doc)
 
 	trunc_size = opt.truncated_decoder  # Badly named...
 	shard_size = opt.max_generator_batches

@@ -240,7 +240,7 @@ class REINFORCELossCompute(LossComputeBase):
     """
     Standard REINFORCE Loss Computation.
     """
-    def __init__(self, generator, tgt_vocab, n_best):
+    def __init__(self, generator, tgt_vocab, n_best, bleu_doc=False):
         super(REINFORCELossCompute, self).__init__(generator, tgt_vocab)
 
         self.tgt_vocab = tgt_vocab
@@ -248,6 +248,7 @@ class REINFORCELossCompute(LossComputeBase):
         weight[self.padding_idx] = 0
         self.criterion = nn.NLLLoss(weight, size_average=False)
         self.n_best = n_best
+        self.bleu_doc=bleu_doc
 
 
     def _make_shard_state(self, batch, output, range_, attns=None):
@@ -268,8 +269,7 @@ class REINFORCELossCompute(LossComputeBase):
         # print ('top_hyp ',len(top_hyp))
         # print ('top_probabilities ', len(top_probabilities))
         # print ('tgt ',tgt.size())
-        bleu_doc = True
-        if bleu_doc:
+        if self.bleu_doc:
             sentences_pred, prob_per_word = self.words_probs_from_preds(top_hyp, top_probabilities, doc_index=doc_index,batch_num=batch_num)
             sentences_gt = self.obtain_words_from_tgt(tgt, doc_index=doc_index)
             # print (doc_index)
