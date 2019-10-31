@@ -350,9 +350,11 @@ class Trainer(object):
 			num_batches = -1
 
 		doc_index = None
-		num_batches = len(train_iter)
+		if model_opt.batch_type == 'sents':
+			num_batches = len(train_iter)
 		for i, batch in enumerate(train_iter):
-			batch_number+=1
+			if batch_number:
+				batch_number+=1
 			if isinstance(batch, tuple):  #if isinstance == document_iterator
 				batch, doc_index = batch
 			cur_dataset = train_iter.get_cur_dataset()
