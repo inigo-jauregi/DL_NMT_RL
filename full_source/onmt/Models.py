@@ -809,7 +809,8 @@ class NMTModel(nn.Module):
 									min_length=self.min_length,
 									stepwise_penalty=self.stepwise_penalty,
 									block_ngram_repeat=self.block_ngram_repeat,
-									exclusion_tokens=exclusion_tokens)
+									exclusion_tokens=exclusion_tokens,
+									for_training=True)
 				for __ in range(batch_size)]
 
 		if src_lengths is None:

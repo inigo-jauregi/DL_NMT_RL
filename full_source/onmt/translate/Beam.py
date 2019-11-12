@@ -22,7 +22,8 @@ class Beam(object):
                  min_length=0,
                  stepwise_penalty=False,
                  block_ngram_repeat=0,
-                 exclusion_tokens=set()):
+                 exclusion_tokens=set(),
+                 for_training=False):
 
         self.size = size
         self.tt = torch.cuda if cuda else torch
@@ -64,6 +65,9 @@ class Beam(object):
         self.stepwise_penalty = stepwise_penalty
         self.block_ngram_repeat = block_ngram_repeat
         self.exclusion_tokens = exclusion_tokens
+
+        #For training
+        self.for_training = for_training
 
     def get_current_state(self):
         "Get the outputs for the current timestep."
@@ -184,7 +188,8 @@ class Beam(object):
             # print (self.next_out_prob)
             # print (self.next_out_prob[j].size())
             # print (self.next_out_prob[j][k].size())
-            #out_prob.append(self.next_out_prob[j][k])
+            if self.for_training:
+                out_prob.append(self.next_out_prob[j][k])
             k = self.prev_ks[j][k]
         return hyp[::-1], torch.stack(attn[::-1]), out_prob[::-1]
 

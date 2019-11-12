@@ -273,7 +273,10 @@ def train_model(model, fields, optim, data_type, model_opt, train_part,batch_siz
 	valid_loss = make_loss_compute(model, fields["tgt"].vocab, opt,train=False)
 
 	if model_opt.RISK_ratio > 0.0:
-		train_REINFORCE_loss = make_loss_compute(model, fields["tgt"].vocab, opt,RL_loss=True, n_best=model_opt.n_best, bleu_doc=model_opt.bleu_doc)
+		print ('jaja')
+		print (model_opt)
+		print ('jaja')
+		train_REINFORCE_loss = make_loss_compute(model, fields["tgt"].vocab, opt,RL_loss=True, n_best=model_opt.n_best, bleu_doc=model_opt.doc_bleu)
 
 	trunc_size = opt.truncated_decoder  # Badly named...
 	shard_size = opt.max_generator_batches
@@ -583,7 +586,8 @@ def main():
 		if opt.train_part in ["context", "all"]:
 			model_opt = opt
 		else:
-			model_opt = checkpoint['opt']
+			# model_opt = checkpoint['opt']
+			model_opt = opt
 			opt.start_epoch = checkpoint['epoch'] + 1
 	else:
 		checkpoint = None
@@ -611,6 +615,10 @@ def main():
 
 	# Build optimizer.
 	optim = build_optim(model, checkpoint)
+
+	# Check if addind my lr changes something:
+	# optim.lr = opt.learning_rate
+	print('LEARNING RATE: ', optim.lr)
 
 	# Do training.
 	train_model(model, fields, optim, data_type, model_opt, opt.train_part, opt.batch_size)
