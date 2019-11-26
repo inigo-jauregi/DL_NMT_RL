@@ -11,7 +11,7 @@ export PYTHONPATH=$zh_segment_home
 src=es
 tgt=en
 pair=$src-$tgt
-data_path=../es-en_2013
+data_path=../en-es
 
 # Tokenise the Spanish part
 cat $data_path/corpus.$src | \
@@ -43,11 +43,11 @@ $moses_scripts/recaser/truecase.perl < $data_path/corpus.tok.$src > $data_path/c
 $moses_scripts/recaser/train-truecaser.perl -model $data_path/truecase-model.$tgt -corpus $data_path/corpus.tok.$tgt
 $moses_scripts/recaser/truecase.perl < $data_path/corpus.tok.$tgt > $data_path/corpus.tc.$tgt -model $data_path/truecase-model.$tgt
 
-ln -s $data_path/corpus.tok.$src  $data_path/corpus.tc.$src
+#ln -s $data_path/corpus.tok.$src  $data_path/corpus.tc.$src
 #
 #  
 # dev sets
-for devset in dev2010 tst2010 tst2011 tst2012; do
+for devset in tst2013 tst2014; do
   for lang  in $src $tgt; do
     if [ $lang = $tgt ]; then
       side="src"
@@ -69,5 +69,5 @@ for devset in dev2010 tst2010 tst2011 tst2012; do
 
 done
 
-python ../full_source/preprocess.py -train_src $data_path/corpus.tc.es -train_tgt $data_path/corpus.tc.en -train_doc $data_path/corpus.doc -valid_src $data_path/IWSLT14.TED.dev2010.tc.es -valid_tgt $data_path/IWSLT14.TED.dev2010.tc.en -valid_doc $data_path/IWSLT14.TED.dev2010.en-es.doc -save_data ../IWSLT14.TED_ES_EN -src_vocab_size 30000 -tgt_vocab_size 30000 -src_seq_length 80 -tgt_seq_length 80
+#python ../full_source/preprocess.py -train_src $data_path/corpus.tc.es -train_tgt $data_path/corpus.tc.en -train_doc $data_path/corpus.doc -valid_src $data_path/IWSLT14.TED.dev2010.tc.es -valid_tgt $data_path/IWSLT14.TED.dev2010.tc.en -valid_doc $data_path/IWSLT14.TED.dev2010.en-es.doc -save_data ../IWSLT14.TED_ES_EN -src_vocab_size 30000 -tgt_vocab_size 30000 -src_seq_length 80 -tgt_seq_length 80
 

@@ -312,7 +312,7 @@ def train_model(model, fields, optim, data_type, model_opt, train_part,batch_siz
 				= trainer.train(train_iter, epoch, report_func, train_part, model_opt=model_opt, fields=fields, start=start_time,
 										data=dataset,no_impr_ppl_num=no_impr_ppl_num,saved_models=saved_models,need_to_save=need_to_save,
 										string_saved_model=string_saved_model,opt=opt, batch_number=number_batch)
-			print('Train perplexity: %g' % train_stats.ppl())
+			# print('Train perplexity: %g' % train_stats.ppl())
 			print('Train accuracy: %g' % train_stats.accuracy())
 
 			epoch += 1

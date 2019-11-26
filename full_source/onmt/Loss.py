@@ -477,7 +477,9 @@ class REINFORCELossCompute(LossComputeBase):
             bs_nBest = []
             for j in range(n_best):
                 pred = predictions[i][j]
+                # print (pred)
                 gt = [ground_truth[i]]
+                # print (gt)
                 BLEU = sentence_bleu(gt,pred)*100
                 bs_nBest.append(BLEU)
 
