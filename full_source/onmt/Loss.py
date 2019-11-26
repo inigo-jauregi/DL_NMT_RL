@@ -29,6 +29,36 @@ from torch.autograd import Variable
 import onmt
 import onmt.io
 from nltk.translate.bleu_score import sentence_bleu
+from nltk.corpus import wordnet as wn
+import nltk
+from nltk.corpus import stopwords
+import codecs, string
+
+
+ps = nltk.stem.PorterStemmer()
+stopW = stopWords = set(stopwords.words('english'))
+remove_punctuation_map = dict((ord(char), None) for char in string.punctuation)
+
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+
+#Load LSA model
+print ('Loading LSA model...')
+vect_dic = {}
+with codecs.open('../scripts/coherence_model/Wiki_6/voc', encoding='utf-8') as f:
+    words = [l.strip() for l in f]
+with codecs.open('../scripts/coherence_model/Wiki_6/lsaModel', encoding='utf-8') as f:
+    vec_list = []
+    for l in f:
+        l=l.split()
+        # l=[float(n) for n in l]
+        l=np.asarray(l,dtype=float)
+        vec_list.append(l)
+
+# Create dictionary
+for i in range(len(words)):
+    # print (words[i])
+    vect_dic[words[i]] = vec_list[i]
 
 class LossComputeBase(nn.Module):
     """
@@ -277,22 +307,30 @@ class REINFORCELossCompute(LossComputeBase):
             # print (len(sentences_pred[0][0]))
             # print (len(sentences_pred[0][1]))
             # print (len(sentences_gt[0]))
+
+            bleu_scores = self.BLEU_score(sentences_pred,sentences_gt)
+            # print (bleu_scores)
+            LC_scores = self.LC_scores(sentences_pred)
+            # print (LC_scores)
+            coher_scores = self.coher_scores(sentences_pred)
+            # print (coher_scores)
+            dl_rewards =  LC_scores + bleu_scores + coher_scores
+
+            dl_loss = self.RISK_loss(prob_per_word, dl_rewards)
+
         else:
             sentences_pred, prob_per_word = self.words_probs_from_preds(top_hyp,top_probabilities)
             # print (prob_per_word.size())
             # print ('i am printing')
             sentences_gt = self.obtain_words_from_tgt(tgt)
+            sl_rewards = self.BLEU_score(sentences_pred, sentences_gt)
+            sl_loss = self.RISK_loss(prob_per_word, sl_rewards)
 
-        #Compute reward!
-        #NEED A FUNCTION TO COMPUTE BLEU SCORE
-        bleu_scores = self.BLEU_score(sentences_pred,sentences_gt)
-        # print (bleu_scores.size()[0])
-        # print ('BLEU score: ',bleu_scores.sum(0)/float(bleu_scores.size()[0]))
+
 
         # #NEED TO COMPUTE THE LOSS
         # loss = bleu_scores*prob_per_word
-        loss = self.RISK_loss(prob_per_word,bleu_scores)
-        loss =loss.sum(0)
+        loss =dl_loss.sum(0)
         loss = - loss  # I set negative because we don't have baseline for the moent
         # print ('The loss: ', loss)
 
@@ -490,6 +528,181 @@ class REINFORCELossCompute(LossComputeBase):
         # print (bleu_scores.size())
 
         return bleu_scores.squeeze()
+
+    def coher_scores(self,predictions):
+        batch_size = len(predictions)
+        n_best = len(predictions[0])
+
+        # print ('Batch_size: ',batch_size)
+
+        coher_scores = []
+        for i in range(batch_size):
+            bs_nBest = []
+            for j in range(n_best):
+                pred = predictions[i][j]
+                coher = self.get_coher_score(pred)*100
+                bs_nBest.append(coher)
+
+            coher_scores.append(bs_nBest)
+        # print (coher_scores)
+        coher_scores = torch.FloatTensor(coher_scores).cuda()  # Cuda line
+
+        return coher_scores.squeeze()
+
+    def get_coher_score(self,sen):
+        # Convert input into sentences
+        sen = " ".join(sen)
+        sen = sen.split('</s>')
+
+        d = []
+        # print ('Num sen: ',len(sen))
+        for l in sen:
+            d.append(self.get_sen_embedding(l))
+
+        avg_coherence = self.compute_coherence(d)
+
+        return avg_coherence
+
+    def compute_coherence(self,document_vectors):
+
+        n_sentences = len(document_vectors)
+        scores = []
+        for i in range(n_sentences - 1):
+            # print (document_vectors[i])
+            # print (document_vectors[i+1])
+            cos_sim = cosine_similarity([document_vectors[i]], [document_vectors[i + 1]])
+            scores.append(cos_sim)
+
+        # Average similarity
+        if len(scores)>0:
+            avg_cos_sim = sum(scores) / float(len(scores))
+        else:
+            avg_cos_sim = np.zeros((1,1))
+        return avg_cos_sim
+
+
+    def get_sen_embedding(self,sentence):
+
+        # Split
+        sentence = sentence.replace('\n', '')
+        tokenized_sen = sentence.split()
+        sen_vec = np.zeros(300)
+        count_words = 0
+        for word in tokenized_sen:
+            theWord = word.lower()
+            if theWord in vect_dic:
+                count_words += 1
+                word_vec = vect_dic[theWord]
+                sen_vec += word_vec
+
+        if count_words != 0:
+            sen_vec = sen_vec / count_words
+
+        return sen_vec
+
+    def LC_scores(self,predictions):
+        batch_size = len(predictions)
+        n_best = len(predictions[0])
+
+        lc_scores = []
+        for i in range(batch_size):
+            bs_nBest = []
+            for j in range(n_best):
+                pred = predictions[i][j]
+                LC = self.get_score(pred)*100
+                bs_nBest.append(LC)
+
+            lc_scores.append(bs_nBest)
+
+        lc_scores = torch.FloatTensor(lc_scores).cuda()  # Cuda line
+
+        return lc_scores.squeeze()
+
+    def penn_to_wn(self,tag):
+        """ Convert between a Penn Treebank tag to a simplified Wordnet tag """
+        if tag.startswith('N'):
+            return 'n'
+
+        if tag.startswith('V'):
+            return 'v'
+
+        if tag.startswith('J'):
+            return 'a'
+
+        if tag.startswith('R'):
+            return 'r'
+
+        return None
+
+    def get_score(self,f):
+
+        swords = dict()
+        CW = 0
+
+        f = " ".join(f)
+        f = f.split('</s>')
+
+        for l in f:
+            l = l.strip().split()
+            pos = nltk.pos_tag(l)
+            for w, p in pos:
+                if w not in stopW:
+                    p = self.penn_to_wn(p)
+                    s = wn.synsets(w, p)
+                    if w not in string.punctuation: CW += 1
+                    if len(s) > 0:
+                        sw = ps.stem(w)
+                        wid = w + "_" + (p if p else "")
+                        if wid in swords:
+                            swords[wid][1] += 1
+                        else:
+                            swords[wid] = [s[0], 1, p, sw, False]
+        RC = 0
+        LC1 = 0
+        LC2 = 0
+        list_words = list(swords)
+        for i, sn in enumerate(list_words):
+            if swords[sn][1] > 1 and not swords[sn][4]:
+                RC += swords[sn][1]
+                swords[sn][4] = True
+
+            for sn2 in list_words[i + 1:]:
+                if not swords[sn][4] or not swords[sn2][4]:
+                    if swords[sn][3] == swords[sn2][3] and swords[sn][2] == swords[sn2][2]:
+                        if not swords[sn][4]:
+                            RC += swords[sn][1]
+                            swords[sn][4] = True
+                        if not swords[sn2][4]:
+                            RC += swords[sn2][1]
+                            swords[sn2][4] = True
+                    else:
+                        fs1, fs2 = swords[sn][0], swords[sn2][0]
+
+                        if fs1.path_similarity(fs2) == 1:
+                            if not swords[sn][4]:
+                                LC1 += swords[sn][1]
+                                swords[sn][4] = True
+                            if not swords[sn2][4]:
+                                LC1 += swords[sn2][1]
+                                swords[sn2][4] = True
+
+                        elif swords[sn][2] == swords[sn2][2]:
+                            min_d = fs1.min_depth()
+                            min_d2 = fs2.min_depth()
+                            s3 = fs1.lowest_common_hypernyms(fs2)
+                            if len(s3) > 0:
+                                s3 = s3[0]
+                                min_d3 = s3.min_depth()
+                                sim = 2 * min_d3 / (min_d + min_d2)
+                                if sim >= 0.96:
+                                    if not swords[sn][4]:
+                                        LC2 += swords[sn][1]
+                                        swords[sn][4] = True
+                                    if not swords[sn2][4]:
+                                        LC2 += swords[sn2][1]
+                                        swords[sn2][4] = True
+
+        return (RC + LC1 + LC2) / float(CW)
 
     def RISK_loss(self,probs, bleu):
 
