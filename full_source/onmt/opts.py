@@ -148,7 +148,13 @@ def model_opts(parser):
 					   help="Ratio of using reinforcement learning")
 
 	# Reward options
+	group.add_argument('-doc_level_reward', type=bool, default=False,
+					   help="Document-level BLEU reward")
 	group.add_argument('-doc_bleu', type=bool, default=False,
+					   help="Document-level BLEU reward")
+	group.add_argument('-doc_LC_COH', type=bool, default=False,
+					   help="Document-level BLEU reward")
+	group.add_argument('-sen_bleu', type=bool, default=False,
 					   help="Document-level BLEU reward")
 
 	group = parser.add_argument_group('Beam')

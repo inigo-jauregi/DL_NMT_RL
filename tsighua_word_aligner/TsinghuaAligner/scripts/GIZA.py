@@ -5,10 +5,10 @@ import sys
 import time
 
 root_dir = '/data/ijauregi/Desktop/CMCRC/DL_NMT_RL/tsighua_word_aligner/TsinghuaAligner'
-MKCLS = root_dir + '/bin/mkcls'
-PLAIN_2_SNT = root_dir + '/bin/plain2snt.out'
-SNT_2_COOC = root_dir + '/bin/snt2cooc.out'
-GIZA = root_dir + '/bin/GIZA++'
+MKCLS = root_dir + '../giza-pp-master/mkcls-v2/bin/mkcls'
+PLAIN_2_SNT = root_dir + '../giza-pp-master/GIZA++-v2/bin/plain2snt.out'
+SNT_2_COOC = root_dir + '../giza-pp-master/GIZA++-v2/bin/snt2cooc.out'
+GIZA = root_dir + '../giza-pp-master/GIZA++-v2/bin/GIZA++'
 CD = 'cd'
 CP = 'cp'
 LS = 'ls'
@@ -21,9 +21,9 @@ def version():
 	s = '----------------------------------------\n' + \
 	    ' GIZA v0.1\n' + \
 		' 2014/01/27 - 2014/01/27\n' + \
-		' (c) 2014 Yang Liu\n' + \
+		' (c) 2014 Yang Liu\n' + \-S
 		'----------------------------------------\n'
-	print s
+	print (s)
 
 def train(srcFileName, trgFileName):
 	'''Train IBM models.'''
@@ -42,7 +42,7 @@ def train(srcFileName, trgFileName):
 
 if __name__ == '__main__':
 	version()
-	if len(sys.argv) != 3:
-		print 'Usage: GIZA srcFile trgFile'
+	if len(sys.argv) != 3:_target
+		print ('Usage: GIZA srcFile trgFile')
 		sys.exit()
 	train(sys.argv[1], sys.argv[2])

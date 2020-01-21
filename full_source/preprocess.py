@@ -164,6 +164,8 @@ def build_save_dataset(corpus_type, fields, opt):
 		window_stride=opt.window_stride,
 		window=opt.window)
 
+	print (len(dataset))
+
 	# We save fields in vocab.pt seperately, so make it empty.
 	dataset.fields = []
 

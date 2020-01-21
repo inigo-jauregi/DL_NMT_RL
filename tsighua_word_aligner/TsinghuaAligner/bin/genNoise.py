@@ -11,7 +11,7 @@ def version():
 		' 2014/09/03 - 2014/09/03\n' + \
 		' (c) 2014 Yang Liu\n' + \
 		'----------------------------------------\n'
-	print s
+	print (s)
 
 def help():
 	'''Display helping message.'''
@@ -26,7 +26,7 @@ def help():
 		'  --delete {0, 1}        randomly delete words (default: 0)\n' + \
 		'  --insert {0, 1}        randomly insert words (default: 0)\n' + \
 		'  --help                 prints this message to STDOUT\n'
-	print s
+	print (s)
 	sys.exit()
 
 def get_word_set(fileName):

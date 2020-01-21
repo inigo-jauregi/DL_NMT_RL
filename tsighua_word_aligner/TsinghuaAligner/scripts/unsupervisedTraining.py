@@ -6,7 +6,7 @@ import copy
 import time
 import random
 
-root_dir = ''
+root_dir = '.'
 GEN_NOISE =  root_dir + '/bin/genNoise.py'
 TRAINER = root_dir + '/bin/trainer'
 
@@ -17,7 +17,7 @@ def version():
 		' 2014/09/07 - 2014/09/07\n' + \
 		' (c) 2014 Yang Liu\n' + \
 		'----------------------------------------\n'
-	print s
+	print (s)
 
 def help():
 	'''Display helping message.'''
@@ -43,7 +43,7 @@ def help():
 		'  --sgd-converge-limit [1, +00)          SGD convergence limit (default: 3)\n' + \
 		'  --sgd-lr-numerator (0, +00)            SGD learning rate numerator (default: 1.0)\n' + \
 		'  --sgd-lr-denominator (0, +00)          SGD learning rate denominator (default: 1.0)\n'
-	print s
+	print (s)
 	sys.exit()
 
 def select_training_corpus(srcFileName, \
@@ -207,13 +207,13 @@ def unsupervised_training(srcFileName, \
     					  sgdLRDenominator):
 	'''Unsupervised training.'''
 	# randomly select training corpus
-	print '\nStep 1: randomly select training corpus'
+	print ('\nStep 1: randomly select training corpus')
 	select_training_corpus(srcFileName, \
 	                       trgFileName, \
 						   trainingCorpusSize, \
 						   sentLengthLimit)
 	# generate noises
-	print '\nStep 2: generate noises'
+	print ('\nStep 2: generate noises')
 	os.system(GEN_NOISE + \
 	          ' --src-file source.txt' + \
 			  ' --trg-file target.txt' + \
@@ -223,7 +223,7 @@ def unsupervised_training(srcFileName, \
 			  ' --insert ' + str(insert) + \
 			  ' --delete ' + str(delete))
 	# generate trainer initialization file
-	print '\nStep 3: generate training initialization file'
+	print ('\nStep 3: generate training initialization file')
 	gen_trainer_ini(srcVcbFileName, \
 	                trgVcbFileName, \
 			        s2tTTableFileName, \
@@ -236,7 +236,7 @@ def unsupervised_training(srcFileName, \
 			        sgdLRNumerator, \
 			        sgdLRDenominator)
 	# unsupervised training
-	print '\nStep 4: contrastive unsupervised training with top-n sampling'
+	print ('\nStep 4: contrastive unsupervised training with top-n sampling')
 	os.system(TRAINER + ' trainer.ini data.txt weights.txt')
 	# generate TsinghuaAligner initialization file
 	gen_aligner_ini(srcVcbFileName, \
@@ -245,7 +245,7 @@ def unsupervised_training(srcFileName, \
 					t2sTTableFileName, \
 					'weights.txt')
 	# clean
-	print '\nStep 5: clean temporary files'
+	print ('\nStep 5: clean temporary files')
 	os.system('rm source.txt target.txt data.txt trainer.ini weights.txt')
 
 if __name__ == '__main__':

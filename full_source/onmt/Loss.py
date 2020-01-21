@@ -270,7 +270,7 @@ class REINFORCELossCompute(LossComputeBase):
     """
     Standard REINFORCE Loss Computation.
     """
-    def __init__(self, generator, tgt_vocab, n_best, bleu_doc=False):
+    def __init__(self, generator, tgt_vocab, n_best, doc_level=False, bleu_doc=False, LC_COH_doc=False,bleu_sen=False):
         super(REINFORCELossCompute, self).__init__(generator, tgt_vocab)
 
         self.tgt_vocab = tgt_vocab
@@ -279,6 +279,9 @@ class REINFORCELossCompute(LossComputeBase):
         self.criterion = nn.NLLLoss(weight, size_average=False)
         self.n_best = n_best
         self.bleu_doc=bleu_doc
+        self.doc_level = doc_level
+        self.LC_COH_doc = LC_COH_doc
+        self.bleu_sen = bleu_sen
 
 
     def _make_shard_state(self, batch, output, range_, attns=None):
@@ -299,7 +302,7 @@ class REINFORCELossCompute(LossComputeBase):
         # print ('top_hyp ',len(top_hyp))
         # print ('top_probabilities ', len(top_probabilities))
         # print ('tgt ',tgt.size())
-        if self.bleu_doc:
+        if self.doc_level:
             sentences_pred, prob_per_word = self.words_probs_from_preds(top_hyp, top_probabilities, doc_index=doc_index,batch_num=batch_num)
             sentences_gt = self.obtain_words_from_tgt(tgt, doc_index=doc_index)
             # print (doc_index)
@@ -308,29 +311,43 @@ class REINFORCELossCompute(LossComputeBase):
             # print (len(sentences_pred[0][1]))
             # print (len(sentences_gt[0]))
 
-            bleu_scores = self.BLEU_score(sentences_pred,sentences_gt)
-            # print (bleu_scores)
-            LC_scores = self.LC_scores(sentences_pred)
-            # print (LC_scores)
-            coher_scores = self.coher_scores(sentences_pred)
-            # print (coher_scores)
-            dl_rewards =  LC_scores + bleu_scores + coher_scores
+            if self.bleu_doc:
+                bleu_doc_scores = self.BLEU_score(sentences_pred,sentences_gt)
+                # print (bleu_scores)
+                dl_rewards = bleu_doc_scores
+            if self.LC_COH_doc:
+                LC_scores = self.LC_scores(sentences_pred)
+                coher_scores = self.coher_scores(sentences_pred)
+                # print (LC_scores)
+                if self.bleu_doc:
+                    dl_rewards += LC_scores
+                    dl_rewards += coher_scores
+                else:
+                    dl_rewards = LC_scores +coher_scores
 
-            dl_loss = self.RISK_loss(prob_per_word, dl_rewards)
 
-        else:
+            loss_doc = self.RISK_loss(prob_per_word, dl_rewards)
+            loss_doc = loss_doc.sum(0)
+
+        if self.bleu_sen:
             sentences_pred, prob_per_word = self.words_probs_from_preds(top_hyp,top_probabilities)
             # print (prob_per_word.size())
             # print ('i am printing')
             sentences_gt = self.obtain_words_from_tgt(tgt)
             sl_rewards = self.BLEU_score(sentences_pred, sentences_gt)
-            sl_loss = self.RISK_loss(prob_per_word, sl_rewards)
+            loss_sen = self.RISK_loss(prob_per_word, sl_rewards)
+            loss_sen = loss_sen.sum(0)
 
-
+        if self.doc_level and self.bleu_sen:
+            loss = loss_doc + loss_sen
+        elif self.doc_level:
+            loss = loss_doc
+        else:
+            loss = loss_sen
 
         # #NEED TO COMPUTE THE LOSS
         # loss = bleu_scores*prob_per_word
-        loss =dl_loss.sum(0)
+        # loss =loss.sum(0)
         loss = - loss  # I set negative because we don't have baseline for the moent
         # print ('The loss: ', loss)
 
