@@ -152,10 +152,12 @@ def model_opts(parser):
 					   help="Document-level BLEU reward")
 	group.add_argument('-doc_bleu', type=bool, default=False,
 					   help="Document-level BLEU reward")
-	group.add_argument('-doc_LC_COH', type=bool, default=False,
-					   help="Document-level BLEU reward")
+	group.add_argument('-doc_LC', type=bool, default=False,
+					   help="Document-level LC reward")
+	group.add_argument('-doc_COH', type=bool, default=False,
+					   help="Document-level COH reward")
 	group.add_argument('-sen_bleu', type=bool, default=False,
-					   help="Document-level BLEU reward")
+					   help="Sentence-level BLEU reward")
 
 	group = parser.add_argument_group('Beam')
 	group.add_argument('-beam_size', type=int, default=5,
