@@ -907,7 +907,10 @@ class NMTModel(nn.Module):
 				dec_states.beam_update(0, beam[batch_i].get_current_origin(), beam_size)
 
 			self._from_beam(beam[batch_i], ret)
-			cache, ind_cache = self.update_context(ret["predictions"][-1][0], cache, ind_cache,
+			choose=0
+			if len(ret["predictions"][-1][choose]) == 1:
+				choose=1
+			cache, ind_cache = self.update_context(ret["predictions"][-1][choose], cache, ind_cache,
 									enc_states, src, memory_bank, src_lengths, batch_i, translate_part, vocab.stoi[onmt.io.PAD_WORD])
 		del beam
 		# (4) Extract sentences from beam.

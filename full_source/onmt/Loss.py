@@ -200,7 +200,7 @@ class LossComputeBase(nn.Module):
         num_correct = pred.eq(target) \
                           .masked_select(non_padding) \
                           .sum()
-        return onmt.Statistics(loss[0], non_padding.sum(), num_correct,n_sentences=n_sentences)
+        return onmt.Statistics(loss.item(), non_padding.sum(), num_correct,n_sentences=n_sentences)
 
     def _bottle(self, v):
         return v.view(-1, v.size(2))
@@ -270,7 +270,7 @@ class REINFORCELossCompute(LossComputeBase):
     """
     Standard REINFORCE Loss Computation.
     """
-    def __init__(self, generator, tgt_vocab, n_best, doc_level=False, bleu_doc=False, LC_COH_doc=False,bleu_sen=False):
+    def __init__(self, generator, tgt_vocab, n_best, doc_level=False, bleu_doc=False, LC_doc=False, COH_doc=False, bleu_sen=False):
         super(REINFORCELossCompute, self).__init__(generator, tgt_vocab)
 
         self.tgt_vocab = tgt_vocab
@@ -280,7 +280,8 @@ class REINFORCELossCompute(LossComputeBase):
         self.n_best = n_best
         self.bleu_doc=bleu_doc
         self.doc_level = doc_level
-        self.LC_COH_doc = LC_COH_doc
+        self.LC_doc = LC_doc
+        self.COH_doc = COH_doc
         self.bleu_sen = bleu_sen
 
 
@@ -311,19 +312,17 @@ class REINFORCELossCompute(LossComputeBase):
             # print (len(sentences_pred[0][1]))
             # print (len(sentences_gt[0]))
 
+            dl_rewards = 0
+
             if self.bleu_doc:
                 bleu_doc_scores = self.BLEU_score(sentences_pred,sentences_gt)
-                # print (bleu_scores)
-                dl_rewards = bleu_doc_scores
-            if self.LC_COH_doc:
+                dl_rewards += bleu_doc_scores
+            if self.LC_doc:
                 LC_scores = self.LC_scores(sentences_pred)
+                dl_rewards += LC_scores
+            if self.COH_doc:
                 coher_scores = self.coher_scores(sentences_pred)
-                # print (LC_scores)
-                if self.bleu_doc:
-                    dl_rewards += LC_scores
-                    dl_rewards += coher_scores
-                else:
-                    dl_rewards = LC_scores +coher_scores
+                dl_rewards += coher_scores
 
 
             loss_doc = self.RISK_loss(prob_per_word, dl_rewards)
@@ -383,7 +382,10 @@ class REINFORCELossCompute(LossComputeBase):
                     # Compute a single document probability??? I would say yes.
                     if j == current_doc_break and current_doc_break!=0:
                         sentences_batch_in_beam.append(words)
+                        # print (len(probability_sen))
+                        # print ('maima')
                         prob_sentence = torch.exp(torch.stack(probability_sen, dim=0).sum(dim=0) / len(probability_sen))
+                        # print ('maima2')
                         probs_batch_in_beam.append(prob_sentence)
                         words = []
                         probability_sen = []
@@ -402,8 +404,10 @@ class REINFORCELossCompute(LossComputeBase):
                         words.append(word)
                         prob = probs[j][i][k][0, hyps[j][i][k]]
                         probability_sen.append(prob)
-
+                # print(len(probability_sen))
+                # print ('ketxua')
                 prob_sentence = torch.exp(torch.stack(probability_sen, dim=0).sum(dim=0) / len(probability_sen))
+                # print ('ketxua2')
                 sentences_batch_in_beam.append(words)
                 probs_batch_in_beam.append(prob_sentence)
 
@@ -450,8 +454,10 @@ class REINFORCELossCompute(LossComputeBase):
 
                     sentences_in_beam.append(words)
                     # print (probability_sen[0])
+                    # print (probability_sen)
+                    # print ('haifa')
                     prob_sentence = torch.exp(torch.stack(probability_sen,dim=0).sum(dim=0)/len(probability_sen))
-
+                    # print ('haifa 2')
                     # print (prob_sentence)
 
                     # prob_sentence[prob_sentence!=prob_sentence]=0
@@ -718,6 +724,9 @@ class REINFORCELossCompute(LossComputeBase):
                                     if not swords[sn2][4]:
                                         LC2 += swords[sn2][1]
                                         swords[sn2][4] = True
+
+        if float(CW) == 0.0:
+            return 0.0
 
         return (RC + LC1 + LC2) / float(CW)
 

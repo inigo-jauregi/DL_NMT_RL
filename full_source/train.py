@@ -159,7 +159,7 @@ class DatasetLazyIter(object):
 		self.fields = fields
 		self.batch_size = batch_size
 		self.batch_size_fn = batch_size_fn
-		self.device = device
+		self.device = torch.device(device)
 		self.is_train = is_train
 		self.train_part = train_part
 
@@ -206,7 +206,7 @@ class DatasetLazyIter(object):
 			return onmt.io.DocumentIterator(
 				dataset=self.cur_dataset, batch_size=self.batch_size,
 				batch_size_fn=self.batch_size_fn,
-				device=self.device, train=self.is_train, 
+				device=self.device, train=self.is_train,
 				sort_within_batch=False, shuffle=False)
 
 
@@ -245,7 +245,7 @@ def make_dataset_iter(datasets, fields, opt, is_train=True):
 
 
 def make_loss_compute(model, tgt_vocab, opt, train=True, RL_loss = False, n_best=None, doc_level=False, bleu_doc=False,
-					  LC_COH_doc=False, bleu_sen=False):
+					  LC_doc=False, COH_doc=False, bleu_sen=False):
 	"""
 	This returns user-defined LossCompute object, which is used to
 	compute loss in train/validate process. You can implement your
@@ -262,7 +262,7 @@ def make_loss_compute(model, tgt_vocab, opt, train=True, RL_loss = False, n_best
 				label_smoothing=opt.label_smoothing if train else 0.0)
 		elif RL_loss==True:
 			compute = onmt.Loss.REINFORCELossCompute(model.generator, tgt_vocab, n_best, doc_level=doc_level,bleu_doc=bleu_doc,
-													 LC_COH_doc=LC_COH_doc,bleu_sen=bleu_sen)
+													 LC_doc=LC_doc, COH_doc=COH_doc, bleu_sen=bleu_sen)
 
 	if use_gpu(opt):
 		compute.cuda()
@@ -280,7 +280,7 @@ def train_model(model, fields, optim, data_type, model_opt, train_part,batch_siz
 		print ('jaja')
 		train_REINFORCE_loss = make_loss_compute(model, fields["tgt"].vocab, opt,RL_loss=True, n_best=model_opt.n_best,
 												 doc_level=model_opt.doc_level_reward, bleu_doc=model_opt.doc_bleu,
-												 LC_COH_doc=model_opt.doc_LC_COH, bleu_sen=model_opt.sen_bleu)
+												 LC_doc=model_opt.doc_LC, COH_doc=model_opt.doc_COH, bleu_sen=model_opt.sen_bleu)
 
 	trunc_size = opt.truncated_decoder  # Badly named...
 	shard_size = opt.max_generator_batches

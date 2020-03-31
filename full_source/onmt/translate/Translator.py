@@ -95,6 +95,8 @@ class Translator(object):
 				 out_attn=None):
 		self.gpu = gpu
 		self.cuda = gpu > -1
+		# print (self.gpu)
+		# print (self.cuda)
 
 		self.model = model
 		self.fields = fields
@@ -149,8 +151,10 @@ class Translator(object):
 									 window=self.window,
 									 use_filter_pred=self.use_filter_pred)
 
+		if self.gpu < 0:
+			self.gpu = 'cpu'
 		data_iter = onmt.io.DocumentIterator(
-			dataset=data, device=self.gpu,
+			dataset=data, device=torch.device(self.gpu),
 			batch_size=batch_size, train=False,
 			sort_within_batch=False, shuffle=False)
 
@@ -283,7 +287,7 @@ class Translator(object):
 		src_lengths = None
 		if data_type == 'text':
 			_, src_lengths = batch.src
-
+		print (src.device)
 		enc_states, memory_bank = self.model.encoder(src, src_lengths)
 		
 		if self.context_type and "HAN_join" in self.context_type:

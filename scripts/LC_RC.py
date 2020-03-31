@@ -89,8 +89,10 @@ def get_score(f):
 								if not swords[sn2][4]: 
 									LC2+=swords[sn2][1]
 									swords[sn2][4]=True
-	
-	return (RC+LC1+LC2)/float(CW)
+	if CW > 0.0:
+		return (RC+LC1+LC2)/float(CW)
+	else:
+		return 0.0
 
 a = sys.argv[1:]
 n=int(a[0])

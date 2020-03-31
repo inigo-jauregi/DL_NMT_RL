@@ -243,7 +243,7 @@ class TextDataset(ONMTDatasetBase):
 			return alignment
 
 		fields["src_map"] = torchtext.data.Field(
-			use_vocab=False, tensor_type=torch.FloatTensor,
+			use_vocab=False, dtype=torch.float,
 			postprocessing=make_src, sequential=False)
 
 		def make_tgt(data, vocab, is_train):
@@ -254,11 +254,11 @@ class TextDataset(ONMTDatasetBase):
 			return alignment
 
 		fields["alignment"] = torchtext.data.Field(
-			use_vocab=False, tensor_type=torch.LongTensor,
+			use_vocab=False, dtype=torch.long,
 			postprocessing=make_tgt, sequential=False)
 
 		fields["indices"] = torchtext.data.Field(
-			use_vocab=False, tensor_type=torch.LongTensor,
+			use_vocab=False, dtype=torch.long,
 			sequential=False)
 
 		return fields

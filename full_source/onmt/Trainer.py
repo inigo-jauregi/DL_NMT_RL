@@ -134,7 +134,7 @@ class DatasetLazyIter_mine(object):
         self.fields = fields
         self.batch_size = batch_size
         self.batch_size_fn = batch_size_fn
-        self.device = device
+        self.device = torch.device(device)
         self.is_train = is_train
         self.train_part = train_part
 
@@ -353,6 +353,10 @@ class Trainer(object):
 		if model_opt.batch_type == 'sents':
 			num_batches = len(train_iter)
 		for i, batch in enumerate(train_iter):
+
+			# print ('# iter  ', i)
+			# if i == 103:
+			# 	print ('found')
 			if batch_number:
 				batch_number+=1
 			if isinstance(batch, tuple):  #if isinstance == document_iterator
