@@ -23,9 +23,9 @@ bert-score==0.3.1
 
 They can be installed running the following command with pip:
 
-'''python
+```python
 pip install -r requirements.txt
-'''
+```
 
 ## Quick tutorial for model training and inference
 
