@@ -38,8 +38,13 @@ tokenization and true-casign.
 Then, we run the following command:
 
 ```python
-python preprocess.py -train_src [source_file] -train_tgt [target_file] -train_doc [doc_file]
--valid_src [source_dev_file] -valid_tgt [target_dev_file] -valid_doc [doc_dev_file] -save_data [out_file]
+python preprocess.py -train_src [source_file]
+                     -train_tgt [target_file]
+                     -train_doc [doc_file]
+                     -valid_src [source_dev_file]
+                     -valid_tgt [target_dev_file]
+                     -valid_doc [doc_dev_file]
+                     -save_data [out_file]
 ```
 
 - **train.src**: Sentences of the documents in the source language (one sentence per line).
@@ -173,11 +178,48 @@ python train.py -data [preprocessed_data]
                 -doc_bleu True
 ```
 
-Note that the training python script requires having the LSA model released by
-Stefanescu et al. (2014) downloaded and saved in the *scripts/coherence_model* folder.
+NOTE: The *training.py* python script requires having the LSA model (Wiki-6) downloaded
+(Stefanescu et al., 2014), and saved in the *scripts/coherence_model* folder.
 
 ### Inference
 
+This is the command to run the inference using a particular trained model:
+
+```python
+python translate.py -model [trained_model_path]
+                    -src [test_src]
+                    -doc [test_doc]
+                    -output [predictions_file]
+                    -translate_part all
+                    -batch_size 1000
+                    -gpu 0
+
+```
+
 ### Evaluation
+
+**BLEU**:
+
+```python
+perl mosesdecoder/scripts/generic/multi-bleu.perl [ref_file]  < [predictions_file] > [output_results_file]
+```
+
+**LC**:
+
+```python
+python scripts/LC_RC.py 1 [predicted_file] [test_doc] > [output_results]
+```
+
+**COH**:
+
+```python
+python scripts/compute_coherence.py 1 [predicted_file] [test_doc] > [output_results]
+```
+
+**F-bert**:
+
+```python
+bert-score -r [ref_file] -c [predicted_file] --lang en -m bert-base-uncased -v > [output_results_file]
+```
 
 ## References
