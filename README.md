@@ -174,7 +174,7 @@ python train.py -data [preprocessed_data]
 ```
 
 Note that the training python script requires having the LSA model released by
-Stefanescu et al. (2014) downloaded and saved in the 'scripts/coherence_model' folder.
+Stefanescu et al. (2014) downloaded and saved in the *scripts/coherence_model* folder.
 
 ### Inference
 
