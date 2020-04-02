@@ -27,7 +27,7 @@ They can be installed running the following command with pip:
 pip install -r requirements.txt
 ```
 
-## Quick tutorial for model training and inference
+## Quick tutorial for model training, inference and evaluation
 
 ### Preprocessing
 
