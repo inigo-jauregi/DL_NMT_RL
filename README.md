@@ -223,3 +223,13 @@ bert-score -r [ref_file] -c [predicted_file] --lang en -m bert-base-uncased -v >
 ```
 
 ## References
+
+Guillaume Klein, Yoon Kim, Yuntian Deng, Jean Senellart, and AlexanderMRush. 2017. Opennmt: Open-source
+toolkit for neural machine translation. arXiv preprint arXiv:1701.02810.
+
+Lesly Miculicich, Dhananjay Ram, Nikolaos Pappas, and James Henderson. 2018. Document-level neural machine
+translation with hierarchical attention networks. In Proceedings of the Conference on Empirical Methods
+in Natural Language Processing (EMNLP).
+
+Dan Stefanescu, Rajendra Banjade, and Vasile Rus. 2014. Latent semantic analysis models on wikipedia and tasa.
+In Language resources evaluation conference (LREC).
